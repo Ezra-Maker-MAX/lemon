@@ -1,3 +1,49 @@
-.photo-btn {
-  margin-top: 28rpx;
+/* 拍照批改页 */
+.pc-btn { margin-top: 28rpx; text-align: center; }
+.pc-center { display: flex; flex-direction: column; align-items: center; }
+.pc-img {
+  width: 100%;
+  height: 560rpx;
+  border-radius: var(--radius-btn);
+  background: #fff;
+  border: 1rpx solid var(--line);
 }
+.pc-ocr-state { font-size: 26rpx; margin-top: 16rpx; }
+.pc-hint { font-size: 24rpx; margin: 12rpx 0 4rpx; }
+.pc-warn { color: var(--ink-red); }
+
+/* 逐词确认列表 */
+.match-item {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 20rpx 24rpx;
+  margin-top: 16rpx;
+  border-radius: var(--radius-btn);
+  border: 2rpx solid var(--line);
+  background: var(--paper);
+}
+.mi-ok { border-color: var(--green-ok); background: var(--fill-green); }
+.mi-wrong { border-color: var(--red-pen); background: var(--fill-red); }
+.mi-skip { opacity: 0.65; }
+.mi-left { display: flex; align-items: baseline; gap: 10rpx; min-width: 200rpx; }
+.mi-word { font-size: 32rpx; font-weight: 600; }
+.mi-pinyin { font-size: 20rpx; }
+.mi-mid {
+  flex: 1;
+  font-size: 22rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mi-chip { font-size: 24rpx; font-weight: 500; color: var(--ink); }
+
+/* done 结果 */
+.done-title { font-size: 36rpx; font-weight: 600; margin-bottom: 12rpx; }
+.done-score { display: flex; align-items: baseline; gap: 20rpx; margin-bottom: 16rpx; }
+.done-pct { font-size: 96rpx; font-weight: 700; }
+.pct-good { color: var(--green-ok); }
+.pct-mid { color: var(--ink-amber); }
+.done-sub { font-size: 26rpx; }
+.done-sec { font-size: 26rpx; font-weight: 500; margin: 12rpx 0; }
+.wrong-item { border-color: var(--red-pen); }
