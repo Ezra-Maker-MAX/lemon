@@ -35,9 +35,9 @@
       <view class="module-name">柠檬字词</view>
       <view class="module-desc">识字 · 写字 · 词语</view>
     </view>
-    <view class="module-card module-en module-disabled">
-      <view class="module-name">柠檬单词</view>
-      <view class="module-desc">M2 敬请期待</view>
+    <view class="module-card module-en" bindtap="goEnglish">
+      <view class="module-name module-en-name">柠檬单词</view>
+      <view class="module-desc">英语 · 四线三格</view>
     </view>
   </view>
 
