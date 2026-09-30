@@ -14,7 +14,9 @@ function loadSecret() {
   }
   try {
     const s = require("./secret.json");
-    if (s.id && s.key) return s;
+    const id = s.id || s.secretId;
+    const key = s.key || s.secretKey;
+    if (id && key) return { id, key };
   } catch (e) {
     /* secret.json 不存在 */
   }
