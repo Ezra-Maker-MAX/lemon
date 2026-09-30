@@ -1,0 +1,11 @@
+{
+  "name": "ai",
+  "version": "1.0.0",
+  "description": "lemon TTS + handwriting OCR",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "tencentcloud-sdk-nodejs-tts": "latest",
+    "tencentcloud-sdk-nodejs-ocr": "latest"
+  }
+}
