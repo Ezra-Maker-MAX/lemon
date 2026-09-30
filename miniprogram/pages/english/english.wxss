@@ -1,0 +1,73 @@
+/* 柠檬单词：薄荷绿模块 */
+.en-hero {
+  background: #A8D5BA;
+  margin: 24rpx;
+  margin-bottom: 0;
+  border-radius: 20rpx;
+  padding: 48rpx 40rpx;
+}
+.en-hero-title {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #1F3D2E;
+}
+.en-hero-sub {
+  font-size: 24rpx;
+  color: #2E5C44;
+  margin-top: 10rpx;
+}
+
+.tag-mint {
+  background: #A8D5BA;
+  color: #1F3D2E;
+}
+
+.chip-row { display: flex; flex-wrap: wrap; gap: 14rpx; }
+.chip {
+  padding: 12rpx 26rpx;
+  border-radius: 999rpx;
+  border: 2rpx solid var(--line);
+  background: var(--paper);
+  font-size: 24rpx;
+  color: var(--ink);
+}
+.chip-on {
+  border-color: #2E7D57;
+  background: #A8D5BA;
+  font-weight: 500;
+}
+
+.en-hint { font-size: 22rpx; margin: 14rpx 0 6rpx; }
+
+/* 四线三格词卡 */
+.en-word-row {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 16rpx 0;
+  border-bottom: 1rpx dashed var(--line);
+}
+.four-line {
+  flex: 1;
+  height: 110rpx;
+  background-image: linear-gradient(#BCDDCB 2rpx, transparent 2rpx);
+  background-size: 100% 36.5rpx;
+  background-position: 0 0;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 16rpx 2rpx;
+}
+.four-line-word {
+  font-size: 44rpx;
+  font-weight: 500;
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+}
+.en-zh {
+  width: 140rpx;
+  font-size: 26rpx;
+  color: var(--ink);
+}
+.en-speak { font-size: 32rpx; }
+
+.en-start { margin-top: 28rpx; text-align: center; }
