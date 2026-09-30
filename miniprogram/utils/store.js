@@ -126,6 +126,64 @@ const getProgress = () => get(KEYS.PROGRESS, null);
 const saveProgress = (p) => set(KEYS.PROGRESS, p);
 const clearProgress = () => set(KEYS.PROGRESS, null);
 
+/* ---------- 自定义词表（M2） ----------
+   [{id, name, words:[{word, pinyin}], createdAt}] */
+const getCustomLists = () => get("custom_lists", []);
+const saveCustomList = (name, rawWords, id) => {
+  const list = getCustomLists();
+  const words = rawWords
+    .map((w) => String(w).trim())
+    .filter((w) => w)
+    .map((w) => ({ word: w.slice(0, 10), pinyin: "" }));
+  let lid = id;
+  if (lid) {
+    const it = list.find((x) => x.id === lid);
+    if (it) {
+      it.name = name;
+      it.words = words;
+    }
+  } else {
+    lid = "cl_" + Date.now();
+    list.unshift({ id: lid, name, words, createdAt: new Date().toISOString() });
+  }
+  set("custom_lists", list.slice(0, 20)); // 防膨胀
+  return lid;
+};
+const getCustomList = (lid) => getCustomLists().find((x) => x.id === lid) || null;
+const deleteCustomList = (lid) => {
+  set("custom_lists", getCustomLists().filter((x) => x.id !== lid));
+};
+
+/* 自定义词补拼音：从课本词库建 字→拼音 映射，逐字拼 */
+function fillPinyinForCustom() {
+  const vocab = require("../data/vocab/index");
+  const charMap = {};
+  const gradeWords = vocab.getAllWords(3, 1);
+  gradeWords.forEach((w) => {
+    const pys = String(w.pinyin || "").split(/\s+/);
+    w.word.split("").forEach((ch, i) => {
+      if (pys[i] && !charMap[ch]) charMap[ch] = pys[i];
+    });
+  });
+  const lists = getCustomLists();
+  let changed = false;
+  lists.forEach((l) =>
+    l.words.forEach((w) => {
+      if (w.pinyin) return;
+      const pys = w.word
+        .split("")
+        .map((ch) => charMap[ch] || "?")
+        .join(" ");
+      if (!pys.includes("?")) {
+        w.pinyin = pys;
+        changed = true;
+      }
+    })
+  );
+  if (changed) set("custom_lists", lists);
+  return charMap;
+}
+
 /* ---------- Turso 云同步（fire-and-forget，失败静默） ---------- */
 function syncSessionToCloud(record) {
   const turso = require("./turso");
@@ -184,4 +242,9 @@ module.exports = {
   getProgress,
   saveProgress,
   clearProgress,
+  getCustomLists,
+  saveCustomList,
+  getCustomList,
+  deleteCustomList,
+  fillPinyinForCustom,
 };
