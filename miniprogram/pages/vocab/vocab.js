@@ -77,4 +77,16 @@ Page({
       url: `/pages/dictation/dictation?term=${term}&unit=${currentUnit}&listType=${listType}&count=${n}`,
     });
   },
+
+  startPhoto() {
+    const { term, currentUnit, listType, count, poolSize } = this.data;
+    if (!poolSize) {
+      wx.showToast({ title: "该表暂无词", icon: "none" });
+      return;
+    }
+    const n = Math.min(count, poolSize);
+    wx.navigateTo({
+      url: `/pages/photo-check/photo-check?term=${term}&unit=${currentUnit}&listType=${listType}&count=${n}`,
+    });
+  },
 });
