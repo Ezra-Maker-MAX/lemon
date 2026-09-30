@@ -49,4 +49,15 @@ function buildWordList(grade, term, unit, listType, count, order = "seq") {
   return pool.slice(0, count);
 }
 
-module.exports = { getUnits, hasBook, buildWordList };
+/** 全册全量词（自定义词表补拼音用） */
+function getAllWords(grade, term) {
+  const book = DB[`${grade}-${term}`];
+  if (!book) return [];
+  const out = [];
+  book.units.forEach((u) => {
+    out.push(...u.shizi, ...u.xiezi, ...u.ciyu);
+  });
+  return out;
+}
+
+module.exports = { getUnits, hasBook, buildWordList, getAllWords };
