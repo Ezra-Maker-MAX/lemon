@@ -1,0 +1,107 @@
+/* 练习单 */
+.sh-hint { font-size: 22rpx; margin-top: 12rpx; }
+.sh-start { margin-top: 28rpx; text-align: center; }
+.sec-label { font-size: 24rpx; font-weight: 500; margin: 28rpx 0 14rpx; }
+.chip-row { display: flex; flex-wrap: wrap; gap: 14rpx; }
+.chip {
+  padding: 12rpx 26rpx;
+  border-radius: 999rpx;
+  border: 2rpx solid var(--line);
+  background: var(--paper);
+  font-size: 24rpx;
+  color: var(--ink);
+}
+.chip-on {
+  border-color: #2B3A55;
+  background: #FFD43B;
+  font-weight: 500;
+}
+
+.sh-toolbar {
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 20rpx;
+}
+.sh-tool-btn {
+  flex: 1;
+  text-align: center;
+  font-size: 26rpx;
+}
+
+/* A4 练习纸：白纸 + 细边框，截图打印友好 */
+.paper {
+  background: #fff;
+  border: 2rpx solid var(--line);
+  border-radius: 8rpx;
+  padding: 40rpx 36rpx 32rpx;
+  box-shadow: 0 4rpx 16rpx rgba(43, 58, 85, 0.08);
+}
+.paper-title {
+  text-align: center;
+  font-size: 40rpx;
+  font-weight: 700;
+  letter-spacing: 10rpx;
+  color: #2B3A55;
+}
+.paper-sub {
+  text-align: center;
+  font-size: 24rpx;
+  color: #6B7280;
+  margin-top: 10rpx;
+}
+.paper-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 24rpx;
+  color: #374151;
+  margin-top: 28rpx;
+}
+.paper-divider {
+  height: 3rpx;
+  background: #2B3A55;
+  margin: 20rpx 0 8rpx;
+}
+
+/* 词行：拼音 + 田字格 */
+.sheet-row {
+  display: flex;
+  align-items: center;
+  padding: 18rpx 0;
+  border-bottom: 1rpx dashed #E5E0D1;
+}
+.row-pinyin {
+  width: 200rpx;
+  font-size: 26rpx;
+  color: #2B3A55;
+  letter-spacing: 2rpx;
+}
+.row-cells {
+  flex: 1;
+  display: flex;
+  gap: 14rpx;
+  justify-content: flex-end;
+}
+.tianzigge {
+  position: relative;
+  width: 110rpx;
+  height: 110rpx;
+  border: 3rpx solid #2B3A55;
+  border-radius: 6rpx;
+  background: #fff;
+}
+.tz-line { position: absolute; }
+.tz-v {
+  left: 50%; top: 0; bottom: 0; width: 0;
+  border-left: 2rpx dashed #D9D2BC;
+}
+.tz-h {
+  top: 50%; left: 0; right: 0; height: 0;
+  border-top: 2rpx dashed #D9D2BC;
+}
+
+.paper-foot {
+  text-align: center;
+  font-size: 20rpx;
+  color: #9CA3AF;
+  margin-top: 28rpx;
+}
