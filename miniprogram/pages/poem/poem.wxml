@@ -1,0 +1,66 @@
+<view class="page-body">
+  <!-- ===== 选诗 ===== -->
+  <block wx:if="{{phase === 'list'}}">
+    <view class="card">
+      <view class="tag tag-amber">古诗填空</view>
+      <view class="muted pm-hint">选一首诗，补全挖空的字。三年级上册 · 共 8 首</view>
+    </view>
+    <view class="pm-list">
+      <view class="card pm-item" wx:for="{{poems}}" wx:key="title" bindtap="onPickPoem" data-idx="{{index}}">
+        <view class="pm-title">{{item.title}}</view>
+        <view class="muted pm-author">{{item.dynasty}} · {{item.author}}</view>
+      </view>
+    </view>
+  </block>
+
+  <!-- ===== 答题 ===== -->
+  <block wx:if="{{phase === 'running'}}">
+    <view class="card pm-card">
+      <view class="pm-head">
+        <view class="tag tag-amber">{{title}}</view>
+        <view class="muted pm-author">{{author}} · 第 {{cur + 1}}/{{blanks.length}} 空</view>
+      </view>
+
+      <view class="pm-poem">
+        <view class="pm-line" wx:for="{{linesView}}" wx:key="index">
+          <text
+            wx:for="{{item.chars}}"
+            wx:for-item="c"
+            wx:key="index"
+            class="pm-char {{c.cls}}"
+          >{{c.ch}}</text>
+        </view>
+      </view>
+
+      <view class="pm-q" wx:if="{{!blanks[cur].judged}}">选字补空：</view>
+      <view class="pm-options">
+        <view
+          wx:for="{{blanks[cur].options}}"
+          wx:key="*this"
+          class="pm-opt {{blanks[cur].judged && item === blanks[cur].char ? 'opt-right' : ''}} {{blanks[cur].judged && item === blanks[cur].picked && !blanks[cur].ok ? 'opt-wrong' : ''}}"
+          bindtap="onPick" data-ch="{{item}}"
+        >{{item}}</view>
+      </view>
+    </view>
+
+    <view class="btn-primary pm-next" wx:if="{{blanks[cur].judged}}" bindtap="onNext">
+      {{cur + 1 === blanks.length ? '看全诗' : '下一空'}}
+    </view>
+  </block>
+
+  <!-- ===== 全诗 ===== -->
+  <block wx:if="{{phase === 'done'}}">
+    <view class="card pm-card">
+      <view class="done-title">{{title}} 🍋</view>
+      <view class="muted pm-author pm-center">{{author}} · 对 {{result.correct}}/{{result.total}}</view>
+      <view class="pm-poem pm-full">
+        <view class="pm-line" wx:for="{{linesView}}" wx:key="index">
+          <text wx:for="{{item.chars}}" wx:for-item="c" wx:key="index" class="pm-char">{{c.ch}}</text>
+        </view>
+      </view>
+      <view class="ctrl-row">
+        <view class="btn-ghost ctrl-btn" bindtap="onBackList">再背一首</view>
+      </view>
+    </view>
+  </block>
+</view>
