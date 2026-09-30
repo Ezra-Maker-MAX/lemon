@@ -71,3 +71,20 @@
 .module-disabled .module-desc { color: var(--muted); }
 
 .stat-hint { margin-top: 16rpx; font-size: 22rpx; }
+
+/* 统计卡：三格横排 */
+.stat-row {
+  display: flex;
+  margin-top: 20rpx;
+}
+.stat-block {
+  flex: 1;
+  text-align: center;
+}
+.stat-num {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: var(--ink);
+}
+.stat-num.stat-red { color: var(--red-pen); }
+.stat-label { font-size: 22rpx; margin-top: 4rpx; }
