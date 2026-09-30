@@ -1,0 +1,59 @@
+<view class="page-body">
+  <!-- ===== pick ===== -->
+  <block wx:if="{{phase === 'pick'}}">
+    <view class="card">
+      <view class="tag tag-amber">练习单</view>
+      <view class="muted sh-hint">生成田字格练习单，截图即可打印</view>
+
+      <view class="sec-label">单元</view>
+      <view class="chip-row">
+        <view
+          wx:for="{{units}}" wx:key="unit"
+          class="chip {{unit === item.unit ? 'chip-on' : ''}}"
+          bindtap="onPickUnit" data-unit="{{item.unit}}"
+        >{{item.title}}</view>
+      </view>
+
+      <view class="sec-label">词表</view>
+      <view class="chip-row">
+        <view class="chip chip-blue {{listType === 'shizi' ? 'chip-on' : ''}}" bindtap="onPickList" data-list="shizi">识字表</view>
+        <view class="chip chip-green {{listType === 'xiezi' ? 'chip-on' : ''}}" bindtap="onPickList" data-list="xiezi">写字表</view>
+        <view class="chip chip-amber {{listType === 'ciyu' ? 'chip-on' : ''}}" bindtap="onPickList" data-list="ciyu">词语表</view>
+      </view>
+
+      <view class="btn-primary sh-start" bindtap="onGenerate">生成练习单（随机 16 词）</view>
+    </view>
+  </block>
+
+  <!-- ===== sheet ===== -->
+  <block wx:if="{{phase === 'sheet'}}">
+    <view class="sh-toolbar">
+      <view class="btn-ghost sh-tool-btn" bindtap="onBack">‹ 重选</view>
+      <view class="btn-ghost sh-tool-btn" bindtap="onShuffle">🔀 换一批</view>
+    </view>
+
+    <!-- A4 练习纸 -->
+    <view class="paper">
+      <view class="paper-title">语文练习单</view>
+      <view class="paper-sub">三年级上册 · {{unitTitle}} · {{listName}}</view>
+      <view class="paper-meta">
+        <text>姓名：__________</text>
+        <text>日期：______月______日</text>
+        <text>用时：________</text>
+      </view>
+      <view class="paper-divider"></view>
+
+      <view class="sheet-row" wx:for="{{rows}}" wx:key="index">
+        <view class="row-pinyin">{{item.pinyin}}</view>
+        <view class="row-cells">
+          <view class="tianzigge" wx:for="{{item.cells}}" wx:for-item="cell" wx:key="index">
+            <view class="tz-line tz-v"></view>
+            <view class="tz-line tz-h"></view>
+          </view>
+        </view>
+      </view>
+
+      <view class="paper-foot">柠檬字词 · 柠檬黄陪每天进步一点点</view>
+    </view>
+  </block>
+</view>
