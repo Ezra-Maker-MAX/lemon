@@ -1,0 +1,24 @@
+/* 设计 token —— 方向稿已确认（2026-09-30）
+   签名元素：田字格（语文）/ 四线三格（英语）
+   禁止在页面里硬编码颜色，一律引用变量 */
+page {
+  --lemon: #FFD43B;        /* 主 accent 柠檬黄 */
+  --ink: #2B3A55;          /* 墨蓝 正文/主按钮 */
+  --paper: #FDFCF7;        /* 作业纸米白 页面底 */
+  --red-pen: #D9534F;      /* 红笔 标错 */
+  --green-ok: #4E9B5A;     /* 绿 判对/成长 */
+  --mint: #A8D5BA;         /* 英语模块头部 */
+  --muted: #8A8A80;        /* 次要文字 */
+  --line: #E3E0D4;         /* 卡片边线 */
+  --grid-line: #C9C5B0;    /* 田字格虚线 */
+  --fill-amber: #FAEEDA;   /* 语文标签底 */
+  --ink-amber: #854F0B;
+  --fill-blue: #E6F1FB;    /* 英语标签底 */
+  --ink-blue: #185FA5;
+  --fill-red: #FCEDEA;
+  --ink-red: #A33A32;
+  --fill-green: #EAF3E4;
+  --ink-green: #2F6B33;
+  --radius-card: 28rpx;
+  --radius-btn: 24rpx;
+}
