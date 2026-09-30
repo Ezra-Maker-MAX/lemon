@@ -3,6 +3,7 @@ config/turso.json
 config/gh.token
 config/*.local.json
 **/project.private.config.json
+miniprogram/config/config.js
 
 # WorkBuddy 会话数据
 .workbuddy/
