@@ -1,47 +1,102 @@
 <view class="page-body">
-  <!-- 顶部：课次进度 -->
-  <view class="dz-top">
-    <view class="tag tag-amber">{{unitTitle}} · {{listName}} · {{index + 1}}/{{words.length}}</view>
-    <view class="dz-pause">⏸ 暂停</view>
-  </view>
+  <!-- ===== ready：词表确认 + 断点续默 ===== -->
+  <block wx:if="{{phase === 'ready'}}">
+    <view class="card dz-ready-card">
+      <view class="tag tag-amber">{{unitTitle}} · {{listName}}</view>
+      <view class="preview-list">
+        <view class="preview-item" wx:for="{{preview}}" wx:key="index">
+          <text class="preview-word">{{item.word}}</text>
+          <text class="preview-pinyin muted">{{item.pinyin}}</text>
+        </view>
+      </view>
+      <view class="muted dz-hint" wx:if="{{words.length > preview.length}}">…共 {{words.length}} 词</view>
 
-  <!-- 格子进度条（D3 随报默点亮） -->
-  <view class="progress-track">
-    <view
-      wx:for="{{words}}"
-      wx:key="index"
-      class="progress-cell {{item.status === 'ok' ? 'done' : (index === currentIndex ? 'current' : '')}}"
-    ></view>
-  </view>
+      <!-- 断点续默卡 -->
+      <view class="resume-card" wx:if="{{resume}}">
+        <view class="resume-left">
+          <view class="resume-title">检测到未完成的报默</view>
+          <view class="muted resume-sub">{{resumeText}}</view>
+        </view>
+        <view class="resume-actions">
+          <view class="btn-primary resume-btn" bindtap="onResume">继续</view>
+          <view class="muted resume-discard" bindtap="onDiscardResume">放弃</view>
+        </view>
+      </view>
 
-  <!-- 田字格书写区（签名元素） -->
-  <view class="card dz-card">
-    <view class="tianzigge">
-      <view class="tz-line tz-v"></view>
-      <view class="tz-line tz-h"></view>
+      <view class="muted dz-hint" wx:if="{{!ttsOk}}">⚠ 语音插件不可用，请家长按预览念词（设置里可开拼音提示）</view>
+
+      <view class="btn-primary start-btn" bindtap="onStart">开始报默</view>
     </view>
-    <view class="muted dz-hint">报默时留白，批改时逐格显示（D3 / D4）</view>
-  </view>
+  </block>
 
-  <!-- D2 词表预览：确认选词正确带入 -->
-  <view class="card" wx:if="{{ready}}">
-    <view class="tag tag-green">已带入 {{words.length}} 词</view>
-    <view class="preview-list">
-      <view class="preview-item" wx:for="{{preview}}" wx:key="index">
-        <text class="preview-word">{{item.word}}</text>
-        <text class="preview-pinyin muted">{{item.pinyin}}</text>
+  <!-- ===== running：TTS 报词 + 标对错 ===== -->
+  <block wx:if="{{phase === 'running'}}">
+    <view class="dz-top">
+      <view class="tag tag-amber">{{unitTitle}} · {{listName}} · {{index + 1}}/{{words.length}}</view>
+      <view class="dz-pause" bindtap="onPauseToggle">{{paused ? "▶ 继续" : "⏸ 暂停"}}</view>
+    </view>
+
+    <!-- 格子进度条 -->
+    <view class="progress-track">
+      <view
+        wx:for="{{words}}"
+        wx:key="index"
+        class="progress-cell {{item.status === 'ok' ? 'done' : (item.status === 'wrong' ? 'miss' : (index === currentIndex ? 'current' : ''))}}"
+      ></view>
+    </view>
+
+    <!-- 田字格书写区：报默中留白，只显示第几词 -->
+    <view class="card dz-card">
+      <view class="tianzigge">
+        <view class="tz-line tz-v"></view>
+        <view class="tz-line tz-h"></view>
+        <view class="tz-num">{{index + 1}}</view>
+      </view>
+      <view class="dz-status {{speaking ? 'is-speaking' : ''}}">
+        {{paused ? "已暂停" : (speaking ? "🔊 朗读中…" : "👂 请写在本子上")}}
+      </view>
+      <view class="muted dz-hint" wx:if="{{showPinyin && current}}">拼音提示：{{current.pinyin}}</view>
+      <view class="muted dz-hint" wx:if="{{!ttsOk}}">⚠ 语音不可用，家长念第 {{index + 1}} 个词</view>
+    </view>
+
+    <!-- 控制条 -->
+    <view class="ctrl-row">
+      <view class="btn-ghost ctrl-btn" bindtap="onRepeat">🔁 重听本词</view>
+      <view class="btn-ghost ctrl-btn" bindtap="onPauseToggle">{{paused ? "▶ 继续" : "⏸ 暂停"}}</view>
+    </view>
+    <view class="judge-row">
+      <view class="judge-btn judge-wrong" bindtap="mark" data-ok="0">标错</view>
+      <view class="judge-btn judge-right" bindtap="mark" data-ok="1">标对</view>
+    </view>
+  </block>
+
+  <!-- ===== done：结果 + 错词重练 ===== -->
+  <block wx:if="{{phase === 'done'}}">
+    <view class="card dz-done-card">
+      <view class="done-title">本轮完成 🍋</view>
+      <view class="done-score">
+        <text class="done-pct {{result.correct === result.total ? 'pct-good' : 'pct-mid'}}">{{result.pct}}%</text>
+        <text class="muted done-sub">对 {{result.correct}} / 错 {{result.wrongList.length}}</text>
+      </view>
+
+      <block wx:if="{{result.wrongList.length}}">
+        <view class="done-sec">错词（已进错题本）</view>
+        <view class="preview-list">
+          <view class="preview-item wrong-item" wx:for="{{result.wrongList}}" wx:key="word">
+            <text class="preview-word">{{item.word}}</text>
+            <text class="preview-pinyin muted">{{item.pinyin}}</text>
+          </view>
+        </view>
+        <view class="btn-primary done-btn" bindtap="onRetryWrong">只练错词（{{result.wrongList.length}}）</view>
+      </block>
+      <block wx:else>
+        <view class="done-sec">全对，太棒了！</view>
+      </block>
+
+      <view class="ctrl-row">
+        <view class="btn-ghost ctrl-btn" bindtap="onRestart">再来一轮</view>
+        <view class="btn-ghost ctrl-btn" bindtap="onBack">回词库</view>
       </view>
     </view>
-    <view class="muted dz-hint">TTS 报词、标对错、断点续默 D3 接入</view>
-  </view>
-
-  <!-- 控制条 -->
-  <view class="ctrl-row">
-    <view class="btn-ghost ctrl-btn">重听本词</view>
-    <view class="btn-primary ctrl-btn">报下一个</view>
-  </view>
-  <view class="judge-row">
-    <view class="judge-btn judge-wrong">标错</view>
-    <view class="judge-btn judge-right">标对</view>
-  </view>
+  </block>
 </view>
