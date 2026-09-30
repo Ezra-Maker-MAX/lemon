@@ -5,28 +5,33 @@
       <view class="tag tag-amber">看拼音写词语</view>
       <view class="muted pw-hint">读拼音 → 口头组词或写在本子上 → 对答案</view>
 
-      <view class="sec-label">单元</view>
-      <view class="chip-row">
-        <view
-          wx:for="{{units}}" wx:key="unit"
-          class="chip {{unit === item.unit ? 'chip-on' : ''}}"
-          bindtap="onPickUnit" data-unit="{{item.unit}}"
-        >{{item.title}}</view>
-      </view>
+      <block wx:if="{{isCustom}}">
+        <view class="sec-label">词单：{{customName}}</view>
+      </block>
+      <block wx:else>
+        <view class="sec-label">单元</view>
+        <view class="chip-row">
+          <view
+            wx:for="{{units}}" wx:key="unit"
+            class="chip {{unit === item.unit ? 'chip-on' : ''}}"
+            bindtap="onPickUnit" data-unit="{{item.unit}}"
+          >{{item.title}}</view>
+        </view>
 
-      <view class="sec-label">词表</view>
-      <view class="chip-row">
-        <view class="chip chip-blue {{listType === 'shizi' ? 'chip-on' : ''}}" bindtap="onPickList" data-list="shizi">识字表</view>
-        <view class="chip chip-green {{listType === 'xiezi' ? 'chip-on' : ''}}" bindtap="onPickList" data-list="xiezi">写字表</view>
-        <view class="chip chip-amber {{listType === 'ciyu' ? 'chip-on' : ''}}" bindtap="onPickList" data-list="ciyu">词语表</view>
-      </view>
+        <view class="sec-label">词表</view>
+        <view class="chip-row">
+          <view class="chip chip-blue {{listType === 'shizi' ? 'chip-on' : ''}}" bindtap="onPickList" data-list="shizi">识字表</view>
+          <view class="chip chip-green {{listType === 'xiezi' ? 'chip-on' : ''}}" bindtap="onPickList" data-list="xiezi">写字表</view>
+          <view class="chip chip-amber {{listType === 'ciyu' ? 'chip-on' : ''}}" bindtap="onPickList" data-list="ciyu">词语表</view>
+        </view>
 
-      <view class="sec-label">词数</view>
-      <view class="stepper">
-        <view class="step-btn" bindtap="onCountMinus">−</view>
-        <text class="step-num">{{count}}</text>
-        <view class="step-btn" bindtap="onCountPlus">＋</view>
-      </view>
+        <view class="sec-label">词数</view>
+        <view class="stepper">
+          <view class="step-btn" bindtap="onCountMinus">−</view>
+          <text class="step-num">{{count}}</text>
+          <view class="step-btn" bindtap="onCountPlus">＋</view>
+        </view>
+      </block>
 
       <view class="btn-primary pw-start" bindtap="onStart">开始练习</view>
     </view>
