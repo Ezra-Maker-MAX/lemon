@@ -1,0 +1,74 @@
+/* 多音字练习 */
+.pp-hint { font-size: 22rpx; margin-top: 12rpx; }
+.pp-start { margin-top: 28rpx; text-align: center; }
+
+.pp-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.pp-word {
+  font-size: 88rpx;
+  font-weight: 600;
+  letter-spacing: 10rpx;
+  margin: 32rpx 0 8rpx;
+}
+.pp-hl { color: #D9534F; }
+.pp-q {
+  font-size: 28rpx;
+  color: var(--muted);
+  margin-bottom: 28rpx;
+}
+
+.pp-options {
+  display: flex;
+  gap: 24rpx;
+  width: 100%;
+  justify-content: center;
+}
+.pp-opt {
+  min-width: 160rpx;
+  text-align: center;
+  padding: 22rpx 0;
+  border-radius: var(--radius-btn);
+  border: 3rpx solid var(--line);
+  background: var(--paper);
+  font-size: 34rpx;
+  font-weight: 500;
+}
+.pp-opt:active { border-color: #2B3A55; }
+.opt-right {
+  border-color: var(--green-ok);
+  background: var(--fill-green);
+  color: var(--ink-green);
+}
+.opt-wrong {
+  border-color: var(--red-pen);
+  background: var(--fill-red);
+  color: var(--ink-red);
+}
+
+.pp-tip {
+  margin-top: 28rpx;
+  text-align: center;
+  width: 100%;
+}
+.tip-ok { color: var(--green-ok); font-size: 30rpx; font-weight: 500; }
+.tip-bad { color: var(--red-pen); font-size: 30rpx; font-weight: 500; }
+.pp-tip-detail {
+  font-size: 24rpx;
+  margin-top: 10rpx;
+}
+
+.pp-next {
+  margin-top: 24rpx;
+  text-align: center;
+}
+
+/* done */
+.done-title { font-size: 36rpx; font-weight: 600; margin-bottom: 12rpx; }
+.done-score { display: flex; align-items: baseline; gap: 20rpx; margin-bottom: 16rpx; }
+.done-pct { font-size: 96rpx; font-weight: 700; }
+.pct-good { color: var(--green-ok); }
+.pct-mid { color: var(--ink-amber); }
+.done-sub { font-size: 26rpx; }
