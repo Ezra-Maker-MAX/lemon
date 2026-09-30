@@ -1,0 +1,7 @@
+<view class="page-body">
+  <view class="card">
+    <view class="tag tag-green">复习报默</view>
+    <view class="placeholder-title">错词复习卷</view>
+    <view class="muted">从错题本一键生成，复用报默页逻辑（D5 接入）</view>
+  </view>
+</view>
