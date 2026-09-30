@@ -27,10 +27,18 @@ Page({
     result: null,
   },
 
-  onLoad() {
+  onLoad(options) {
     store.initDefaults();
+    this.isCustom = options.src === "custom";
+    if (this.isCustom) {
+      this.customList = store.getCustomList(options.lid);
+      store.fillPinyinForCustom();
+      this.customList = store.getCustomList(options.lid);
+    }
     const units = vocab.getUnits(3, 1);
     this.setData({
+      isCustom: this.isCustom,
+      customName: (this.customList || {}).name || "",
       units,
       unitTitle: (units.find((u) => u.unit === 1) || {}).title || "",
     });
@@ -57,15 +65,20 @@ Page({
   },
 
   onStart() {
-    const { unit, listType, count } = this.data;
-    const words = vocab.buildWordList(3, 1, unit, listType, count, "seq");
+    let words;
+    if (this.isCustom) {
+      words = ((this.customList || {}).words || []).slice(0, 15);
+    } else {
+      const { unit, listType, count } = this.data;
+      words = vocab.buildWordList(3, 1, unit, listType, count, "seq");
+    }
     if (!words.length) {
       wx.showToast({ title: "该词表为空", icon: "none" });
       return;
     }
     this.setData({
       phase: "running",
-      listName: LIST_NAME[listType] || listType,
+      listName: this.isCustom ? "自定义词单" : LIST_NAME[this.data.listType] || this.data.listType,
       words: words.map((w) => ({ ...w, status: "pending" })),
       index: 0,
       currentIndex: 0,
