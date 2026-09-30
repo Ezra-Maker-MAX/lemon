@@ -4,6 +4,8 @@ config/gh.token
 config/*.local.json
 **/project.private.config.json
 miniprogram/config/config.js
+cloudfunctions/*/secret.json
+cloudfunctions/**/node_modules/
 
 # WorkBuddy 会话数据
 .workbuddy/
