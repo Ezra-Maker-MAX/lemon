@@ -1,17 +1,13 @@
-/* TTS 封装：微信同声传译插件 WechatSI（免费）
-   textToSpeech 拿 mp3 地址 → innerAudioContext 播放
-   同文本（含语速）缓存 mp3 URL；失败通过 onError 上抛，不阻塞报默流程
-   （插件不可用时页面走"手动报词"兜底：家长照预览念） */
-let plugin = null;
-try {
-  plugin = requirePlugin("WechatSI");
-} catch (e) {
-  plugin = null;
-}
-
+/* TTS 封装：腾讯云基础语音合成（经云函数 ai，个人主体可用）
+   WechatSI 插件不支持个人主体，已弃用（见 2026-09-30 日志）
+   链路：wx.cloud.callFunction("ai", {action:"tts"}) → base64 mp3 → 写临时文件 → 播放
+   同文本缓存本地文件；任何失败通过 onError 上抛，页面走"手动报词"兜底，不阻塞流程 */
 let audio = null;
 let doneCb = null;
-const urlCache = {}; // "rate|text" -> mp3 url
+const fileCache = {}; // text -> 本地 mp3 路径
+const CACHE_LIMIT = 50;
+
+const fsm = wx.getFileSystemManager();
 
 function ensureAudio() {
   if (audio) return audio;
@@ -31,46 +27,76 @@ function ensureAudio() {
 }
 
 function clampRate(rate) {
-  // settings.speechRate ∈ [-1,1] → 播放速率 [0.75, 1.25]
-  const r = 1 + (Number(rate) || 0) * 0.25;
-  return Math.min(2, Math.max(0.5, r));
+  // settings.speechRate ∈ [-1,1] → 腾讯云 Speed ∈ [-0.5, 0.5]（每 0.1 一档较自然）
+  return Math.max(-0.5, Math.min(0.5, (Number(rate) || 0) * 0.5));
 }
 
-function play(url, rate, onDone) {
+function play(path, onDone) {
   const a = ensureAudio();
   a.stop();
-  a.playbackRate = clampRate(rate);
-  a.src = url;
+  a.src = path;
   doneCb = onDone;
   a.play();
+}
+
+function cachePut(key, path) {
+  const keys = Object.keys(fileCache);
+  if (keys.length >= CACHE_LIMIT) {
+    const oldest = fileCache[keys[0]];
+    try {
+      fsm.unlinkSync(oldest);
+    } catch (e) {
+      /* 忽略清理失败 */
+    }
+    delete fileCache[keys[0]];
+  }
+  fileCache[key] = path;
+}
+
+function writeAudio(base64, onOk, onError) {
+  const path = `${wx.env.USER_DATA_PATH}/tts_${Date.now()}_${Math.floor(Math.random() * 1e4)}.mp3`;
+  fsm.writeFile({
+    filePath: path,
+    data: base64,
+    encoding: "base64",
+    success: () => onOk(path),
+    fail: (e) => onError(new Error("写音频文件失败: " + (e.errMsg || e.message))),
+  });
 }
 
 function speak(text, opts = {}) {
   const { rate = 0, onDone, onError } = opts;
   if (!text) return;
-  if (!plugin) {
-    onError && onError(new Error("WechatSI 插件不可用"));
+  if (!wx.cloud) {
+    onError && onError(new Error("基础库不支持云能力"));
     return;
   }
-  const key = `${rate}|${text}`;
-  if (urlCache[key]) {
-    play(urlCache[key], rate, onDone);
+  const key = `${Math.round(clampRate(rate) * 10)}|${text}`;
+  if (fileCache[key]) {
+    play(fileCache[key], onDone);
     return;
   }
-  plugin.textToSpeech({
-    lang: "zh_CN",
-    tts: true,
-    content: text,
-    success: (res) => {
-      if (res.retcode !== 0 || !res.filename) {
-        onError && onError(new Error(res.errmsg || "TTS retcode " + res.retcode));
+  wx.cloud
+    .callFunction({
+      name: "ai",
+      data: { action: "tts", text, speed: clampRate(rate) },
+    })
+    .then((res) => {
+      const r = res && res.result;
+      if (!r || r.code !== "OK" || !r.audio) {
+        onError && onError(new Error((r && r.message) || "TTS 云函数返回异常"));
         return;
       }
-      urlCache[key] = res.filename;
-      play(res.filename, rate, onDone);
-    },
-    fail: (e) => onError && onError(e),
-  });
+      writeAudio(
+        r.audio,
+        (path) => {
+          cachePut(key, path);
+          play(path, onDone);
+        },
+        onError
+      );
+    })
+    .catch((e) => onError && onError(new Error(e.errMsg || e.message)));
 }
 
 function stop() {
@@ -80,4 +106,4 @@ function stop() {
   }
 }
 
-module.exports = { speak, stop, available: !!plugin };
+module.exports = { speak, stop, available: !!wx.cloud };
