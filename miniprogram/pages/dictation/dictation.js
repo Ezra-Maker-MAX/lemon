@@ -141,6 +141,7 @@ Page({
     });
     tts.speak(this.utterText(w), {
       rate: this.settings.speechRate || 0,
+      voiceType: this.settings.voiceType || 101001,
       onDone: () => this.setData({ speaking: false }),
       onError: () => this.setData({ speaking: false, ttsOk: false }),
     });
