@@ -1,0 +1,71 @@
+/* 古诗填空 */
+.pm-hint { font-size: 22rpx; margin-top: 12rpx; }
+.pm-list { display: flex; flex-direction: column; gap: 20rpx; }
+.pm-item { display: flex; align-items: baseline; justify-content: space-between; }
+.pm-title { font-size: 32rpx; font-weight: 600; }
+.pm-author { font-size: 24rpx; }
+
+.pm-card { display: flex; flex-direction: column; align-items: center; }
+.pm-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+/* 诗身：竖直排布大字 */
+.pm-poem {
+  margin: 28rpx 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+.pm-line {
+  text-align: center;
+  letter-spacing: 8rpx;
+}
+.pm-char {
+  font-size: 44rpx;
+  font-weight: 500;
+  display: inline-block;
+  min-width: 48rpx;
+}
+.st-blank {
+  color: #D9534F;
+  border-bottom: 4rpx solid #D9534F;
+  font-weight: 700;
+}
+.st-ok { color: var(--green-ok); }
+.st-bad { color: var(--red-pen); }
+.pm-full .pm-char { font-size: 40rpx; }
+
+.pm-q { font-size: 26rpx; color: var(--muted); margin-bottom: 16rpx; }
+.pm-options { display: flex; gap: 24rpx; }
+.pm-opt {
+  min-width: 110rpx;
+  text-align: center;
+  padding: 18rpx 0;
+  border-radius: var(--radius-btn);
+  border: 3rpx solid var(--line);
+  background: var(--paper);
+  font-size: 38rpx;
+  font-weight: 500;
+}
+.pm-opt:active { border-color: #2B3A55; }
+.opt-right {
+  border-color: var(--green-ok);
+  background: var(--fill-green);
+  color: var(--ink-green);
+}
+.opt-wrong {
+  border-color: var(--red-pen);
+  background: var(--fill-red);
+  color: var(--ink-red);
+}
+
+.pm-next { margin-top: 24rpx; text-align: center; }
+.pm-center { text-align: center; }
+
+.ctrl-row { display: flex; gap: 24rpx; margin-top: 20rpx; width: 100%; }
+.ctrl-btn { flex: 1; text-align: center; }
+.done-title { font-size: 36rpx; font-weight: 600; margin-bottom: 12rpx; }
