@@ -23,6 +23,7 @@
   background: var(--line);
 }
 .progress-cell.done { background: var(--green-ok); }
+.progress-cell.miss { background: var(--red-pen); }
 .progress-cell.current { background: var(--lemon); }
 
 /* 田字格：外框实线 + 内部虚线十字 */
@@ -60,6 +61,47 @@
   border-top: 2rpx dashed var(--grid-line);
 }
 .dz-hint { font-size: 22rpx; }
+
+/* 田字格中央序号：报默中不露字，只报第几词 */
+.tz-num {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 96rpx;
+  font-weight: 600;
+  color: var(--grid-line);
+}
+
+/* 朗读状态灯 */
+.dz-status {
+  font-size: 28rpx;
+  color: var(--muted);
+  margin-bottom: 8rpx;
+}
+.dz-status.is-speaking { color: var(--ink); font-weight: 500; }
+
+/* ready 卡 */
+.dz-ready-card { margin-top: 8rpx; }
+.start-btn { margin-top: 24rpx; text-align: center; }
+
+/* 断点续默卡 */
+.resume-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20rpx;
+  padding: 20rpx 24rpx;
+  border: 2rpx dashed var(--grid-line);
+  border-radius: var(--radius-btn);
+  background: var(--paper);
+}
+.resume-title { font-size: 26rpx; font-weight: 500; }
+.resume-sub { font-size: 22rpx; margin-top: 4rpx; }
+.resume-actions { display: flex; align-items: center; gap: 20rpx; }
+.resume-btn { padding: 12rpx 36rpx; font-size: 26rpx; }
+.resume-discard { font-size: 24rpx; }
 
 /* D2 词表预览 */
 .preview-list {
@@ -116,3 +158,15 @@
   background: var(--fill-green);
   color: var(--ink-green);
 }
+
+/* done 结果卡 */
+.dz-done-card { margin-top: 8rpx; }
+.done-title { font-size: 36rpx; font-weight: 600; margin-bottom: 12rpx; }
+.done-score { display: flex; align-items: baseline; gap: 20rpx; margin-bottom: 16rpx; }
+.done-pct { font-size: 96rpx; font-weight: 700; }
+.pct-good { color: var(--green-ok); }
+.pct-mid { color: var(--ink-amber); }
+.done-sub { font-size: 26rpx; }
+.done-sec { font-size: 26rpx; font-weight: 500; margin: 12rpx 0; }
+.done-btn { text-align: center; margin-bottom: 8rpx; }
+.wrong-item { border-color: var(--red-pen); }
