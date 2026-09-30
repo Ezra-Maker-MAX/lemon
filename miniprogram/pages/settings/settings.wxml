@@ -81,9 +81,9 @@
       <text>当前教材</text>
       <text class="muted">人教版 · 三年级上册</text>
     </view>
-    <view class="setting-row">
+    <view class="setting-row" bindtap="goCustom">
       <text>自定义词表</text>
-      <text class="muted">后续版本</text>
+      <text class="muted">管理 ›</text>
     </view>
   </view>
 
