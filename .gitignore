@@ -10,3 +10,6 @@ config/*.local.json
 # 依赖与构建产物
 node_modules/
 dist/
+
+# 自动化自检截图
+tools/shots/
