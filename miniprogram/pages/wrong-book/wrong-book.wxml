@@ -1,8 +1,43 @@
 <view class="page-body">
-  <view class="card">
+  <!-- 空态 -->
+  <view class="card" wx:if="{{!items.length}}">
     <view class="tag tag-red">错题本</view>
-    <view class="placeholder-title">还没有错词</view>
-    <view class="muted">报默标错后自动收录；连对 3 次自动毕业（D4 / D5 接入）</view>
-    <view class="btn-ghost review-btn">一键生成复习卷</view>
+    <view class="placeholder-title">还没有错词 🎉</view>
+    <view class="muted">报默或拍照批改标错后自动收录；连对 3 次自动毕业</view>
+    <view class="btn-primary review-btn" bindtap="goVocab">去报默</view>
   </view>
+
+  <!-- 错词列表 -->
+  <block wx:else>
+    <view class="wb-head">
+      <view class="tag tag-red">错题本</view>
+      <view class="muted wb-sub">{{items.length}} 个错词在池 · {{masteredCount}} 个已毕业</view>
+    </view>
+
+    <view class="card wb-item" wx:for="{{items}}" wx:key="word">
+      <view class="dz-cell wrong-book-cell">
+        <text class="wb-word">{{item.word}}</text>
+        <text class="muted wb-pinyin">{{item.pinyin}}</text>
+      </view>
+      <view class="wb-meta">
+        <text class="wb-wrong">错 {{item.wrongCount}} 次</text>
+        <text class="muted">{{item.dateText}}</text>
+        <text class="wb-streak" wx:if="{{item.streakText}}">{{item.streakText}}</text>
+      </view>
+    </view>
+
+    <!-- 复习卷生成 -->
+    <view class="card">
+      <view class="tag tag-amber">复习卷</view>
+      <view class="wb-gen-row">
+        <view class="stepper">
+          <view class="step-btn" bindtap="decCount">−</view>
+          <view class="step-num">{{count}} 词</view>
+          <view class="step-btn" bindtap="incCount">＋</view>
+        </view>
+        <view class="muted wb-gen-hint">错得多的优先</view>
+      </view>
+      <view class="btn-primary review-btn" bindtap="goReview">一键生成复习卷</view>
+    </view>
+  </block>
 </view>
