@@ -1,0 +1,26 @@
+<view class="page-body">
+  <view class="card">
+    <view class="tag tag-amber">家长设置</view>
+    <view class="setting-row">
+      <text>教材版本</text>
+      <text class="muted">人教版 · 三年级</text>
+    </view>
+    <view class="setting-row">
+      <text>语速 / 报词间隔 / 重复次数</text>
+      <text class="muted">D3 接入</text>
+    </view>
+    <view class="setting-row">
+      <text>拼音提示</text>
+      <text class="muted">D3 接入</text>
+    </view>
+    <view class="setting-row">
+      <text>自定义词表</text>
+      <text class="muted">D5 接入</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="danger-btn">清空全部数据</view>
+    <view class="muted danger-hint">本地 + 云端备份一并清空，需二次确认</view>
+  </view>
+</view>
