@@ -41,6 +41,29 @@
     </view>
   </view>
 
+  <!-- 更多练法 -->
+  <view class="card">
+    <view class="tag tag-amber">更多练法</view>
+    <view class="extra-grid">
+      <view class="extra-item" bindtap="goPinyinWrite">
+        <view class="extra-icon">🔤</view>
+        <view class="extra-name">看拼音写词语</view>
+      </view>
+      <view class="extra-item" bindtap="goPolyphone">
+        <view class="extra-icon">🎯</view>
+        <view class="extra-name">多音字</view>
+      </view>
+      <view class="extra-item" bindtap="goPoem">
+        <view class="extra-icon">📜</view>
+        <view class="extra-name">古诗填空</view>
+      </view>
+      <view class="extra-item" bindtap="goSheet">
+        <view class="extra-icon">📄</view>
+        <view class="extra-name">练习单</view>
+      </view>
+    </view>
+  </view>
+
   <!-- 统计卡 -->
   <view class="card" bindtap="goWrongBook">
     <view class="tag tag-green">学习统计</view>
