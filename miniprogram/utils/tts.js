@@ -65,13 +65,13 @@ function writeAudio(base64, onOk, onError) {
 }
 
 function speak(text, opts = {}) {
-  const { rate = 0, onDone, onError } = opts;
+  const { rate = 0, voiceType = 101001, onDone, onError } = opts;
   if (!text) return;
   if (!wx.cloud) {
     onError && onError(new Error("基础库不支持云能力"));
     return;
   }
-  const key = `${Math.round(clampRate(rate) * 10)}|${text}`;
+  const key = `${Math.round(clampRate(rate) * 10)}|${voiceType}|${text}`;
   if (fileCache[key]) {
     play(fileCache[key], onDone);
     return;
@@ -79,7 +79,7 @@ function speak(text, opts = {}) {
   wx.cloud
     .callFunction({
       name: "ai",
-      data: { action: "tts", text, speed: clampRate(rate) },
+      data: { action: "tts", text, speed: clampRate(rate), voiceType },
     })
     .then((res) => {
       const r = res && res.result;
