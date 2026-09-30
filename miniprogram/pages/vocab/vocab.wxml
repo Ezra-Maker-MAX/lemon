@@ -1,0 +1,25 @@
+<view class="page-body">
+  <view class="card">
+    <view class="tag tag-amber">选择词库</view>
+    <view class="placeholder-title">三年级 · 上册</view>
+    <view class="term-switch">
+      <view class="term-option active">上册</view>
+      <view class="term-option">下册</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="placeholder-title">单元列表</view>
+    <view class="muted">1-8 单元入口，D2 接入词库 JSON 后点亮</view>
+  </view>
+
+  <view class="card">
+    <view class="placeholder-title">表类型</view>
+    <view class="list-type-row">
+      <view class="tag tag-amber">识字表</view>
+      <view class="tag tag-green">写字表</view>
+      <view class="tag tag-blue">词语表</view>
+    </view>
+    <view class="muted">三选一后进报默页（D2 联动）</view>
+  </view>
+</view>
