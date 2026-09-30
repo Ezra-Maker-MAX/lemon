@@ -1,0 +1,40 @@
+<view class="page-body">
+  <!-- 顶部：课次进度 -->
+  <view class="dz-top">
+    <view class="tag tag-amber">第 3 词 / 共 10 词</view>
+    <view class="dz-pause">⏸ 暂停</view>
+  </view>
+
+  <!-- 格子进度条 -->
+  <view class="progress-track">
+    <view class="progress-cell done"></view>
+    <view class="progress-cell done"></view>
+    <view class="progress-cell current"></view>
+    <view class="progress-cell"></view>
+    <view class="progress-cell"></view>
+    <view class="progress-cell"></view>
+    <view class="progress-cell"></view>
+    <view class="progress-cell"></view>
+    <view class="progress-cell"></view>
+    <view class="progress-cell"></view>
+  </view>
+
+  <!-- 田字格书写区（签名元素） -->
+  <view class="card dz-card">
+    <view class="tianzigge">
+      <view class="tz-line tz-v"></view>
+      <view class="tz-line tz-h"></view>
+    </view>
+    <view class="muted dz-hint">报默时留白，批改时逐格显示（D3 / D4）</view>
+  </view>
+
+  <!-- 控制条 -->
+  <view class="ctrl-row">
+    <view class="btn-ghost ctrl-btn">重听本词</view>
+    <view class="btn-primary ctrl-btn">报下一个</view>
+  </view>
+  <view class="judge-row">
+    <view class="judge-btn judge-wrong">标错</view>
+    <view class="judge-btn judge-right">标对</view>
+  </view>
+</view>
