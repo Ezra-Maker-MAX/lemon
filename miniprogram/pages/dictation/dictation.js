@@ -36,28 +36,43 @@ Page({
     store.initDefaults();
     this.settings = store.getSettings();
 
+    const mode = options.mode === "review" ? "review" : "voice";
     const term = Number(options.term) || 1;
     const unit = Number(options.unit) || 1;
     const listType = options.listType || "xiezi";
     const count = Number(options.count) || 10;
     const order = options.order === "random" ? "random" : "seq";
-    this.sessionMeta = { term, unit, listType, count, order };
+    this.sessionMeta = { mode, term, unit, listType, count, order };
 
-    const words = vocab.buildWordList(3, term, unit, listType, count, order);
+    let words;
+    let unitTitle = "";
+    let listName;
+    if (mode === "review") {
+      /* 复习卷：错题本未毕业错词，错得多的优先 */
+      const pool = store
+        .getWrongBook()
+        .sort((a, b) => (b.wrongCount || 0) - (a.wrongCount || 0));
+      words = pool.slice(0, count).map((w) => ({ word: w.word, pinyin: w.pinyin }));
+      listName = "复习卷";
+      unitTitle = "错题复习";
+    } else {
+      words = vocab.buildWordList(3, term, unit, listType, count, order);
+      const units = vocab.getUnits(3, term);
+      unitTitle = (units.find((u) => u.unit === unit) || {}).title || "";
+      listName = LIST_NAME[listType] || listType;
+    }
     if (!words.length) {
       wx.showToast({ title: "词表为空，请回词库选择", icon: "none" });
       setTimeout(() => wx.navigateBack(), 1200);
       return;
     }
-    const units = vocab.getUnits(3, term);
-    const unitTitle = (units.find((u) => u.unit === unit) || {}).title || "";
 
     this.setData({
       term,
       unit,
       listType,
       unitTitle,
-      listName: LIST_NAME[listType] || listType,
+      listName,
       words: words.map((w) => ({ ...w, status: "pending" })),
       preview: words.slice(0, 10),
     });
@@ -207,7 +222,7 @@ Page({
     store.addSession({
       unit: this.data.unit,
       listType: this.data.listType,
-      mode: "voice",
+      mode: (this.sessionMeta && this.sessionMeta.mode) || "voice",
       total,
       correct,
       words: words.map((w) => ({ word: w.word, status: w.status })),
@@ -236,8 +251,17 @@ Page({
   },
 
   onRestart() {
-    const m = this.sessionMeta;
-    const words = vocab.buildWordList(3, m.term, m.unit, m.listType, m.count, m.order);
+    let words;
+    if (this.sessionMeta && this.sessionMeta.mode === "review") {
+      words = store
+        .getWrongBook()
+        .sort((a, b) => (b.wrongCount || 0) - (a.wrongCount || 0))
+        .slice(0, this.sessionMeta.count)
+        .map((w) => ({ word: w.word, pinyin: w.pinyin }));
+    } else {
+      const m = this.sessionMeta;
+      words = vocab.buildWordList(3, m.term, m.unit, m.listType, m.count, m.order);
+    }
     if (!words.length) return;
     this.setData({
       phase: "running",
