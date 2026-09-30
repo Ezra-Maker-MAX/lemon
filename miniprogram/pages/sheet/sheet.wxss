@@ -105,3 +105,12 @@
   color: #9CA3AF;
   margin-top: 28rpx;
 }
+
+/* 离屏导出画布 */
+.export-canvas {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+  width: 794px;
+  height: 1123px;
+}
