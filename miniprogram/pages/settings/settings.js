@@ -87,8 +87,11 @@ Page({
     });
   },
 
-  /* ---------- 清空全部数据（二次确认） ---------- */
-  onClearData() {
+  goCustom() {
+    wx.navigateTo({ url: "/pages/custom-list/custom-list" });
+  },
+
+  /* ---------- 清空全部数据（二次确认） ---------- */  onClearData() {
     wx.showModal({
       title: "清空全部数据？",
       content: "报默记录、错题本、断点将全部删除，且不可恢复。",
