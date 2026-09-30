@@ -61,4 +61,16 @@ Page({
   goWrongBook() {
     wx.switchTab({ url: "/pages/wrong-book/wrong-book" });
   },
+  goPinyinWrite() {
+    wx.navigateTo({ url: "/pages/pinyin-write/pinyin-write" });
+  },
+  goPolyphone() {
+    wx.navigateTo({ url: "/pages/polyphone/polyphone" });
+  },
+  goPoem() {
+    wx.navigateTo({ url: "/pages/poem/poem" });
+  },
+  goSheet() {
+    wx.navigateTo({ url: "/pages/sheet/sheet" });
+  },
 });
