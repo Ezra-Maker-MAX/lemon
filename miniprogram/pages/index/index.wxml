@@ -1,0 +1,44 @@
+<view class="hero">
+  <view class="hero-title">柠檬字词</view>
+  <view class="hero-sub">三年级 · 人教版</view>
+</view>
+
+<view class="page-body">
+  <!-- 今日任务卡 -->
+  <view class="card">
+    <view class="tag tag-amber">今日任务</view>
+    <view class="task-title">语文 · 三年级上册</view>
+    <view class="muted task-hint">格子进度条随报默点亮（D3 接入）</view>
+    <view class="progress-track">
+      <view class="progress-cell done"></view>
+      <view class="progress-cell current"></view>
+      <view class="progress-cell"></view>
+      <view class="progress-cell"></view>
+      <view class="progress-cell"></view>
+      <view class="progress-cell"></view>
+      <view class="progress-cell"></view>
+      <view class="progress-cell"></view>
+      <view class="progress-cell"></view>
+      <view class="progress-cell"></view>
+    </view>
+    <view class="btn-primary">继续报默</view>
+  </view>
+
+  <!-- 两大模块卡 -->
+  <view class="module-grid">
+    <view class="module-card module-cn">
+      <view class="module-name">柠檬字词</view>
+      <view class="module-desc">识字 · 写字 · 词语</view>
+    </view>
+    <view class="module-card module-en module-disabled">
+      <view class="module-name">柠檬单词</view>
+      <view class="module-desc">M2 敬请期待</view>
+    </view>
+  </view>
+
+  <!-- 上周正确率 -->
+  <view class="card">
+    <view class="tag tag-green">上周正确率</view>
+    <view class="muted stat-hint">本地统计 D5 接入</view>
+  </view>
+</view>
