@@ -1,0 +1,94 @@
+/* 语音报默页：田字格是全 App 的签名元素 */
+.dz-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+.dz-pause {
+  font-size: 26rpx;
+  color: var(--muted);
+}
+
+/* 格子进度条（与首页同款，抽公共样式放 D3） */
+.progress-track {
+  display: flex;
+  gap: 10rpx;
+  margin-bottom: 24rpx;
+}
+.progress-cell {
+  flex: 1;
+  height: 36rpx;
+  border-radius: 8rpx;
+  background: var(--line);
+}
+.progress-cell.done { background: var(--green-ok); }
+.progress-cell.current { background: var(--lemon); }
+
+/* 田字格：外框实线 + 内部虚线十字 */
+.dz-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.tianzigge {
+  position: relative;
+  width: 360rpx;
+  height: 360rpx;
+  border: 3rpx solid var(--ink);
+  border-radius: 8rpx;
+  background: #fff;
+  margin: 12rpx 0 24rpx;
+}
+.tz-line {
+  position: absolute;
+  background: none;
+  border: 0;
+}
+.tz-v {
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  border-left: 2rpx dashed var(--grid-line);
+}
+.tz-h {
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 2rpx dashed var(--grid-line);
+}
+.dz-hint { font-size: 22rpx; }
+
+/* 控制条 */
+.ctrl-row {
+  display: flex;
+  gap: 24rpx;
+  margin: 8rpx 0 20rpx;
+}
+.ctrl-btn {
+  flex: 1;
+}
+
+/* 标对 / 标错 */
+.judge-row {
+  display: flex;
+  gap: 24rpx;
+}
+.judge-btn {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  border-radius: var(--radius-btn);
+  font-size: 30rpx;
+  font-weight: 500;
+}
+.judge-wrong {
+  background: var(--fill-red);
+  color: var(--ink-red);
+}
+.judge-right {
+  background: var(--fill-green);
+  color: var(--ink-green);
+}
