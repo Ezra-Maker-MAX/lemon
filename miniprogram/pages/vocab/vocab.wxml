@@ -47,5 +47,8 @@
     <view class="muted type-hint">本表共 {{poolSize}} 词，顺序可在设置页改为随机</view>
   </view>
 
-  <view class="btn-primary start-btn" bindtap="startDictation">开始报默</view>
+  <view class="start-row">
+    <view class="btn-primary start-btn start-flex" bindtap="startDictation">开始报默</view>
+    <view class="btn-ghost start-btn start-flex" bindtap="startPhoto">📷 拍照批改</view>
+  </view>
 </view>
