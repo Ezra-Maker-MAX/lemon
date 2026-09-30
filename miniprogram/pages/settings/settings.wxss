@@ -9,6 +9,59 @@
 .setting-row:last-child {
   border-bottom: none;
 }
+.setting-row.col {
+  flex-direction: column;
+  align-items: stretch;
+}
+.row-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.col-head {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+.sub-hint {
+  font-size: 22rpx;
+}
+.rate-text {
+  color: var(--ink);
+  font-weight: 500;
+  font-size: 26rpx;
+}
+.set-slider {
+  margin: 20rpx 8rpx 8rpx;
+}
+
+/* stepper */
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+}
+.step-btn {
+  width: 56rpx;
+  height: 56rpx;
+  line-height: 52rpx;
+  text-align: center;
+  border-radius: 50%;
+  border: 2rpx solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 32rpx;
+}
+.step-btn:active {
+  background: var(--lemon);
+}
+.step-num {
+  min-width: 48rpx;
+  text-align: center;
+  font-weight: 600;
+  font-size: 32rpx;
+}
+
 .danger-btn {
   text-align: center;
   padding: 24rpx 0;
