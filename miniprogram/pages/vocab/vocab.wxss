@@ -116,3 +116,8 @@
 .start-btn {
   margin-top: 8rpx;
 }
+.start-row {
+  display: flex;
+  gap: 20rpx;
+}
+.start-flex { flex: 1; text-align: center; }
