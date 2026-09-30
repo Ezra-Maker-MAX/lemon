@@ -1,0 +1,57 @@
+<view class="page-body">
+  <!-- ===== running ===== -->
+  <block wx:if="{{phase === 'running'}}">
+    <view class="card en-card">
+      <view class="tag tag-mint">{{unitTitle}} · {{index + 1}}/{{words.length}}</view>
+
+      <view class="ed-status {{speaking ? 'is-speaking' : ''}}">
+        {{speaking ? "🔊 朗读中…" : "👂 拼写在本子上"}}
+      </view>
+      <view class="ed-zh">中文提示：{{current.zh}}</view>
+
+      <view class="four-line ed-line" wx:if="{{revealed}}">
+        <text class="four-line-word">{{current.en}}</text>
+      </view>
+      <view class="four-line ed-line ed-empty" wx:else>
+        <text class="ed-q">？</text>
+      </view>
+    </view>
+
+    <view class="ctrl-row">
+      <view class="btn-ghost ctrl-btn" bindtap="onRepeat">🔁 再听一次</view>
+    </view>
+
+    <view class="btn-primary ed-btn" wx:if="{{!revealed}}" bindtap="onReveal">显示拼写</view>
+    <view class="judge-row" wx:else>
+      <view class="judge-btn judge-wrong" bindtap="mark" data-ok="0">拼错了</view>
+      <view class="judge-btn judge-right" bindtap="mark" data-ok="1">拼对了</view>
+    </view>
+  </block>
+
+  <!-- ===== done ===== -->
+  <block wx:if="{{phase === 'done'}}">
+    <view class="card en-card">
+      <view class="done-title">本轮完成 🍋</view>
+      <view class="done-score">
+        <text class="done-pct {{result.correct === result.total ? 'pct-good' : 'pct-mid'}}">{{result.pct}}%</text>
+        <text class="muted done-sub">对 {{result.correct}} / 错 {{result.wrongList.length}}</text>
+      </view>
+      <block wx:if="{{result.wrongList.length}}">
+        <view class="done-sec">错词（连对 3 次出池）</view>
+        <view class="ed-wrong-list">
+          <view class="ed-wrong-item" wx:for="{{result.wrongList}}" wx:key="en">
+            <text class="ed-wrong-en">{{item.en}}</text>
+            <text class="muted">{{item.zh}}</text>
+          </view>
+        </view>
+        <view class="btn-primary ed-btn" bindtap="onRetryWrong">只练错词（{{result.wrongList.length}}）</view>
+      </block>
+      <block wx:else>
+        <view class="done-sec">全对，perfect！</view>
+      </block>
+      <view class="ctrl-row">
+        <view class="btn-ghost ctrl-btn" bindtap="onBack">回单词列表</view>
+      </view>
+    </view>
+  </block>
+</view>
