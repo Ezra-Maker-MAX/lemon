@@ -1,22 +1,17 @@
 <view class="page-body">
   <!-- 顶部：课次进度 -->
   <view class="dz-top">
-    <view class="tag tag-amber">第 3 词 / 共 10 词</view>
+    <view class="tag tag-amber">{{unitTitle}} · {{listName}} · {{index + 1}}/{{words.length}}</view>
     <view class="dz-pause">⏸ 暂停</view>
   </view>
 
-  <!-- 格子进度条 -->
+  <!-- 格子进度条（D3 随报默点亮） -->
   <view class="progress-track">
-    <view class="progress-cell done"></view>
-    <view class="progress-cell done"></view>
-    <view class="progress-cell current"></view>
-    <view class="progress-cell"></view>
-    <view class="progress-cell"></view>
-    <view class="progress-cell"></view>
-    <view class="progress-cell"></view>
-    <view class="progress-cell"></view>
-    <view class="progress-cell"></view>
-    <view class="progress-cell"></view>
+    <view
+      wx:for="{{words}}"
+      wx:key="index"
+      class="progress-cell {{item.status === 'ok' ? 'done' : (index === currentIndex ? 'current' : '')}}"
+    ></view>
   </view>
 
   <!-- 田字格书写区（签名元素） -->
@@ -26,6 +21,18 @@
       <view class="tz-line tz-h"></view>
     </view>
     <view class="muted dz-hint">报默时留白，批改时逐格显示（D3 / D4）</view>
+  </view>
+
+  <!-- D2 词表预览：确认选词正确带入 -->
+  <view class="card" wx:if="{{ready}}">
+    <view class="tag tag-green">已带入 {{words.length}} 词</view>
+    <view class="preview-list">
+      <view class="preview-item" wx:for="{{preview}}" wx:key="index">
+        <text class="preview-word">{{item.word}}</text>
+        <text class="preview-pinyin muted">{{item.pinyin}}</text>
+      </view>
+    </view>
+    <view class="muted dz-hint">TTS 报词、标对错、断点续默 D3 接入</view>
   </view>
 
   <!-- 控制条 -->
