@@ -1,26 +1,72 @@
 <view class="page-body">
+  <!-- ===== 报默参数 ===== -->
   <view class="card">
-    <view class="tag tag-amber">家长设置</view>
-    <view class="setting-row">
-      <text>教材版本</text>
-      <text class="muted">人教版 · 三年级</text>
+    <view class="tag tag-amber">报默设置</view>
+
+    <view class="setting-row col">
+      <view class="row-head">
+        <text>播报语速</text>
+        <text class="rate-text">{{rateText}}</text>
+      </view>
+      <slider
+        class="set-slider"
+        min="-1" max="1" step="0.2"
+        value="{{s.speechRate}}"
+        activeColor="#2B3A55" backgroundColor="#EFEAD8"
+        block-size="24"
+        bindchange="onRateChange"
+      />
     </view>
-    <view class="setting-row">
-      <text>语速 / 报词间隔 / 重复次数</text>
-      <text class="muted">D3 接入</text>
+
+    <view class="setting-row col">
+      <view class="row-head">
+        <text>报词间隔</text>
+        <text class="rate-text">{{s.intervalSec}} 秒</text>
+      </view>
+      <slider
+        class="set-slider"
+        min="10" max="60" step="5"
+        value="{{s.intervalSec}}"
+        activeColor="#2B3A55" backgroundColor="#EFEAD8"
+        block-size="24"
+        bindchange="onIntervalChange"
+      />
     </view>
+
     <view class="setting-row">
-      <text>拼音提示</text>
-      <text class="muted">D3 接入</text>
+      <text>每词重复次数</text>
+      <view class="stepper">
+        <view class="step-btn" bindtap="onRepeatMinus">−</view>
+        <text class="step-num">{{s.repeatCount}}</text>
+        <view class="step-btn" bindtap="onRepeatPlus">＋</view>
+      </view>
     </view>
+
     <view class="setting-row">
-      <text>自定义词表</text>
-      <text class="muted">D5 接入</text>
+      <view class="col-head">
+        <text>拼音提示</text>
+        <text class="muted sub-hint">报默中在田字格下方显示拼音</text>
+      </view>
+      <switch checked="{{s.showPinyin}}" color="#FFD43B" bindchange="onPinyinToggle" />
     </view>
   </view>
 
+  <!-- ===== 教材信息 ===== -->
   <view class="card">
-    <view class="danger-btn">清空全部数据</view>
-    <view class="muted danger-hint">本地 + 云端备份一并清空，需二次确认</view>
+    <view class="tag tag-blue">教材版本</view>
+    <view class="setting-row">
+      <text>当前教材</text>
+      <text class="muted">人教版 · 三年级上册</text>
+    </view>
+    <view class="setting-row">
+      <text>自定义词表</text>
+      <text class="muted">后续版本</text>
+    </view>
+  </view>
+
+  <!-- ===== 危险区 ===== -->
+  <view class="card">
+    <view class="danger-btn" bindtap="onClearData">清空全部数据</view>
+    <view class="muted danger-hint">报默记录 / 错题本 / 断点一并清空，需二次确认</view>
   </view>
 </view>
