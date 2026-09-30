@@ -57,3 +57,66 @@
   color: var(--ink);
 }
 .step-num { font-size: 30rpx; font-weight: 600; color: var(--ink); }
+
+/* 周报（M2） */
+.wb-week-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 16rpx;
+  margin-top: 16rpx;
+}
+.wb-week-num {
+  font-size: 72rpx;
+  font-weight: 700;
+  color: var(--ink-amber);
+}
+.wb-week-num.wb-good { color: var(--green-ok); }
+.wb-week-sub { font-size: 22rpx; }
+
+.wb-bars {
+  display: flex;
+  gap: 12rpx;
+  align-items: flex-end;
+  height: 140rpx;
+  margin-top: 20rpx;
+}
+.wb-bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+.wb-bar-wrap {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.wb-bar {
+  width: 60%;
+  background: #FFD43B;
+  border-radius: 6rpx 6rpx 0 0;
+  min-height: 4rpx;
+}
+.wb-bar-label {
+  font-size: 18rpx;
+  margin-top: 8rpx;
+}
+
+.wb-top-label { font-size: 22rpx; margin-top: 18rpx; }
+.wb-top-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 12rpx;
+}
+.wb-top-word {
+  padding: 8rpx 20rpx;
+  border-radius: 999rpx;
+  background: var(--fill-red);
+  color: var(--ink-red);
+  font-size: 24rpx;
+  font-weight: 500;
+}
