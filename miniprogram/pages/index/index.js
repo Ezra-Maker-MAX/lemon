@@ -73,4 +73,10 @@ Page({
   goSheet() {
     wx.navigateTo({ url: "/pages/sheet/sheet" });
   },
+  goEnglish() {
+    wx.navigateTo({ url: "/pages/english/english" });
+  },
+  goCustomList() {
+    wx.navigateTo({ url: "/pages/custom-list/custom-list" });
+  },
 });
