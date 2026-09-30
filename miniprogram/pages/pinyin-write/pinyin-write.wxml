@@ -1,0 +1,86 @@
+<view class="page-body">
+  <!-- ===== pick ===== -->
+  <block wx:if="{{phase === 'pick'}}">
+    <view class="card">
+      <view class="tag tag-amber">看拼音写词语</view>
+      <view class="muted pw-hint">读拼音 → 口头组词或写在本子上 → 对答案</view>
+
+      <view class="sec-label">单元</view>
+      <view class="chip-row">
+        <view
+          wx:for="{{units}}" wx:key="unit"
+          class="chip {{unit === item.unit ? 'chip-on' : ''}}"
+          bindtap="onPickUnit" data-unit="{{item.unit}}"
+        >{{item.title}}</view>
+      </view>
+
+      <view class="sec-label">词表</view>
+      <view class="chip-row">
+        <view class="chip chip-blue {{listType === 'shizi' ? 'chip-on' : ''}}" bindtap="onPickList" data-list="shizi">识字表</view>
+        <view class="chip chip-green {{listType === 'xiezi' ? 'chip-on' : ''}}" bindtap="onPickList" data-list="xiezi">写字表</view>
+        <view class="chip chip-amber {{listType === 'ciyu' ? 'chip-on' : ''}}" bindtap="onPickList" data-list="ciyu">词语表</view>
+      </view>
+
+      <view class="sec-label">词数</view>
+      <view class="stepper">
+        <view class="step-btn" bindtap="onCountMinus">−</view>
+        <text class="step-num">{{count}}</text>
+        <view class="step-btn" bindtap="onCountPlus">＋</view>
+      </view>
+
+      <view class="btn-primary pw-start" bindtap="onStart">开始练习</view>
+    </view>
+  </block>
+
+  <!-- ===== running ===== -->
+  <block wx:if="{{phase === 'running'}}">
+    <view class="card pw-card">
+      <view class="tag tag-amber">{{unitTitle}} · {{listName}} · {{index + 1}}/{{words.length}}</view>
+
+      <view class="pw-pinyin">{{current.pinyin}}</view>
+
+      <view class="pw-grid">
+        <view class="tianzigge" wx:for="{{boxes}}" wx:key="index">
+          <view class="tz-line tz-v"></view>
+          <view class="tz-line tz-h"></view>
+          <text wx:if="{{revealed}}" class="tz-char">{{current.word[index]}}</text>
+        </view>
+      </view>
+
+      <view class="muted pw-hint2" wx:if="{{!revealed}}">想一想，再点下方按钮对答案</view>
+      <view class="muted pw-hint2" wx:else>写对了吗？诚实判分才有效哦</view>
+    </view>
+
+    <view class="pw-actions" wx:if="{{!revealed}}">
+      <view class="btn-primary" bindtap="onReveal">显示答案</view>
+    </view>
+    <view class="judge-row" wx:else>
+      <view class="judge-btn judge-wrong" bindtap="mark" data-ok="0">写错了</view>
+      <view class="judge-btn judge-right" bindtap="mark" data-ok="1">写对了</view>
+    </view>
+  </block>
+
+  <!-- ===== done ===== -->
+  <block wx:if="{{phase === 'done'}}">
+    <view class="card pw-card">
+      <view class="done-title">本轮完成 🍋</view>
+      <view class="done-score">
+        <text class="done-pct {{result.correct === result.total ? 'pct-good' : 'pct-mid'}}">{{result.pct}}%</text>
+        <text class="muted done-sub">对 {{result.correct}} / 错 {{result.wrongList.length}}</text>
+      </view>
+      <block wx:if="{{result.wrongList.length}}">
+        <view class="done-sec">错词（已进错题本）</view>
+        <view class="preview-list">
+          <view class="preview-item wrong-item" wx:for="{{result.wrongList}}" wx:key="word">
+            <text class="preview-word">{{item.word}}</text>
+            <text class="preview-pinyin muted">{{item.pinyin}}</text>
+          </view>
+        </view>
+      </block>
+      <block wx:else>
+        <view class="done-sec">全对，太棒了！</view>
+      </block>
+      <view class="btn-primary pw-start" bindtap="onRestart">再练一轮</view>
+    </view>
+  </block>
+</view>
