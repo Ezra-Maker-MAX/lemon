@@ -9,11 +9,12 @@ const KEYS = {
 };
 
 const DEFAULT_SETTINGS = {
-  speechRate: 0,      // WechatSI 语速 -1~1
+  speechRate: 0,      // TTS 语速 -1~1
   intervalSec: 15,    // 报词间隔秒
   repeatCount: 1,     // 每词重复次数
   order: "seq",       // seq | random
   showPinyin: false,  // 报默时显示拼音提示
+  voiceType: 101001,  // 腾讯云 TTS 音色（101001 智瑜·女声）
 };
 
 const DEFAULT_PROFILE = {
