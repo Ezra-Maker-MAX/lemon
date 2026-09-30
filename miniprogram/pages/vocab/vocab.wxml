@@ -1,25 +1,51 @@
 <view class="page-body">
-  <view class="card">
-    <view class="tag tag-amber">选择词库</view>
-    <view class="placeholder-title">三年级 · 上册</view>
+  <!-- 教材信息头 -->
+  <view class="grade-head">
+    <view class="grade-main">三年级 · 人教版</view>
     <view class="term-switch">
-      <view class="term-option active">上册</view>
-      <view class="term-option">下册</view>
+      <view class="term-option {{term === 1 ? 'active' : ''}}" bindtap="pickTerm" data-term="1">上册</view>
+      <view class="term-option {{term === 2 ? 'active' : ''}}" bindtap="pickTerm" data-term="2">下册</view>
     </view>
   </view>
 
+  <!-- 单元网格 -->
   <view class="card">
-    <view class="placeholder-title">单元列表</view>
-    <view class="muted">1-8 单元入口，D2 接入词库 JSON 后点亮</view>
+    <view class="section-label">选择单元</view>
+    <view class="unit-grid">
+      <view
+        wx:for="{{units}}"
+        wx:key="unit"
+        class="unit-cell {{currentUnit === item.unit ? 'unit-active' : ''}}"
+        bindtap="pickUnit"
+        data-unit="{{item.unit}}"
+      >
+        <view class="unit-name">{{item.title}}</view>
+        <view class="unit-count muted">写 {{item.counts.xiezi}} · 词 {{item.counts.ciyu}}</view>
+      </view>
+    </view>
   </view>
 
+  <!-- 表类型 -->
   <view class="card">
-    <view class="placeholder-title">表类型</view>
+    <view class="section-label">表类型</view>
     <view class="list-type-row">
-      <view class="tag tag-amber">识字表</view>
-      <view class="tag tag-green">写字表</view>
-      <view class="tag tag-blue">词语表</view>
+      <view class="type-btn {{listType === 'xiezi' ? 'type-active' : ''}} type-green" bindtap="pickListType" data-type="xiezi">写字表</view>
+      <view class="type-btn {{listType === 'ciyu' ? 'type-active' : ''}} type-amber" bindtap="pickListType" data-type="ciyu">词语表</view>
+      <view class="type-btn type-disabled">识字表</view>
     </view>
-    <view class="muted">三选一后进报默页（D2 联动）</view>
+    <view class="muted type-hint">识字表待家长对照课本校对后开放</view>
   </view>
+
+  <!-- 词数 -->
+  <view class="card">
+    <view class="section-label">报默词数</view>
+    <view class="stepper-row">
+      <view class="step-btn" bindtap="decCount">−</view>
+      <view class="step-num">{{count}} 词</view>
+      <view class="step-btn" bindtap="incCount">＋</view>
+    </view>
+    <view class="muted type-hint">本表共 {{poolSize}} 词，顺序可在设置页改为随机</view>
+  </view>
+
+  <view class="btn-primary start-btn" bindtap="startDictation">开始报默</view>
 </view>
