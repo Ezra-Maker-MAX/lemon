@@ -1,0 +1,57 @@
+/* 自定义词表 */
+.cl-hint { font-size: 22rpx; margin-top: 12rpx; }
+.cl-new { margin-top: 24rpx; text-align: center; }
+
+.cl-name {
+  border: 2rpx solid var(--line);
+  border-radius: var(--radius-btn);
+  background: var(--paper);
+  padding: 18rpx 24rpx;
+  font-size: 28rpx;
+  margin-top: 20rpx;
+}
+.cl-raw {
+  width: 100%;
+  box-sizing: border-box;
+  border: 2rpx solid var(--line);
+  border-radius: var(--radius-btn);
+  background: var(--paper);
+  padding: 18rpx 24rpx;
+  font-size: 28rpx;
+  margin-top: 20rpx;
+  min-height: 200rpx;
+  line-height: 1.6;
+}
+.cl-count { font-size: 22rpx; margin-top: 14rpx; }
+.cl-btn-row {
+  display: flex;
+  gap: 24rpx;
+  margin-top: 24rpx;
+}
+.cl-btn { flex: 1; text-align: center; }
+
+.cl-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.cl-title { font-size: 32rpx; font-weight: 600; }
+.cl-preview {
+  font-size: 24rpx;
+  margin-top: 10rpx;
+}
+.cl-actions {
+  display: flex;
+  gap: 14rpx;
+  margin-top: 20rpx;
+  flex-wrap: wrap;
+}
+.cl-act {
+  padding: 12rpx 22rpx;
+  border-radius: 999rpx;
+  border: 2rpx solid var(--line);
+  background: var(--paper);
+  font-size: 24rpx;
+}
+.cl-act:active { background: #FFF8E1; }
+.cl-del { color: var(--ink-red); border-color: var(--red-pen); }
