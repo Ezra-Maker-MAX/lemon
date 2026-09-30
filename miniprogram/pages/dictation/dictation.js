@@ -42,12 +42,23 @@ Page({
     const listType = options.listType || "xiezi";
     const count = Number(options.count) || 10;
     const order = options.order === "random" ? "random" : "seq";
-    this.sessionMeta = { mode, term, unit, listType, count, order };
+    this.sessionMeta = { mode, term, unit, listType, count, order, lid: options.lid || "" };
 
     let words;
     let unitTitle = "";
     let listName;
-    if (mode === "review") {
+    if (options.src === "custom") {
+      /* 自定义词单：src=custom&lid=xxx */
+      const l = store.getCustomList(options.lid);
+      if (!l || !l.words.length) {
+        wx.showToast({ title: "词单不存在", icon: "none" });
+        setTimeout(() => wx.navigateBack(), 1200);
+        return;
+      }
+      words = l.words.slice(0, 20);
+      unitTitle = l.name;
+      listName = "自定义词单";
+    } else if (mode === "review") {
       /* 复习卷：错题本未毕业错词，错得多的优先 */
       const pool = store
         .getWrongBook()
@@ -253,7 +264,10 @@ Page({
 
   onRestart() {
     let words;
-    if (this.sessionMeta && this.sessionMeta.mode === "review") {
+    if (this.sessionMeta && this.sessionMeta.listType === "custom") {
+      const l = store.getCustomList(this.sessionMeta.lid);
+      words = l ? l.words.slice(0, 20) : [];
+    } else if (this.sessionMeta && this.sessionMeta.mode === "review") {
       words = store
         .getWrongBook()
         .sort((a, b) => (b.wrongCount || 0) - (a.wrongCount || 0))
