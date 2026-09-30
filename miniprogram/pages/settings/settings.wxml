@@ -51,6 +51,29 @@
     </view>
   </view>
 
+  <!-- ===== 发音音色 ===== -->
+  <view class="card">
+    <view class="tag tag-blue">发音音色</view>
+    <view class="muted voice-hint">点一下试听，听到喜欢的就选它报默</view>
+    <view class="voice-grid">
+      <view
+        wx:for="{{voices}}"
+        wx:key="id"
+        class="voice-card {{s.voiceType === item.id ? 'active' : ''}}"
+        bindtap="onVoiceTap"
+        data-id="{{item.id}}"
+      >
+        <view class="voice-mark">{{item.mark}}</view>
+        <view class="voice-name">{{item.name}}</view>
+        <view class="voice-tag muted">{{item.tag}}</view>
+        <view class="voice-wave" wx:if="{{previewingId === item.id}}">
+          <view class="wv wv1"></view><view class="wv wv2"></view><view class="wv wv3"></view>
+        </view>
+        <view class="voice-check" wx:if="{{s.voiceType === item.id}}">✓</view>
+      </view>
+    </view>
+  </view>
+
   <!-- ===== 教材信息 ===== -->
   <view class="card">
     <view class="tag tag-blue">教材版本</view>
