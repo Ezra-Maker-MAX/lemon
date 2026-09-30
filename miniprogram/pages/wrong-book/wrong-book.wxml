@@ -1,0 +1,8 @@
+<view class="page-body">
+  <view class="card">
+    <view class="tag tag-red">错题本</view>
+    <view class="placeholder-title">还没有错词</view>
+    <view class="muted">报默标错后自动收录；连对 3 次自动毕业（D4 / D5 接入）</view>
+    <view class="btn-ghost review-btn">一键生成复习卷</view>
+  </view>
+</view>
