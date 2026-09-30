@@ -10,7 +10,10 @@
     "pages/pinyin-write/pinyin-write",
     "pages/polyphone/polyphone",
     "pages/poem/poem",
-    "pages/sheet/sheet"
+    "pages/sheet/sheet",
+    "pages/custom-list/custom-list",
+    "pages/english/english",
+    "pages/english-dictation/english-dictation"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FFD43B",
