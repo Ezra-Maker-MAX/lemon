@@ -7,26 +7,31 @@
   <!-- 今日任务卡 -->
   <view class="card">
     <view class="tag tag-amber">今日任务</view>
-    <view class="task-title">语文 · 三年级上册</view>
-    <view class="muted task-hint">格子进度条随报默点亮（D3 接入）</view>
-    <view class="progress-track">
-      <view class="progress-cell done"></view>
-      <view class="progress-cell current"></view>
-      <view class="progress-cell"></view>
-      <view class="progress-cell"></view>
-      <view class="progress-cell"></view>
-      <view class="progress-cell"></view>
-      <view class="progress-cell"></view>
-      <view class="progress-cell"></view>
-      <view class="progress-cell"></view>
-      <view class="progress-cell"></view>
-    </view>
-    <view class="btn-primary">继续报默</view>
+    <block wx:if="{{resume}}">
+      <view class="task-title">{{resume.title}}</view>
+      <view class="muted task-hint">{{resume.text}} · 中断处继续</view>
+      <view class="progress-track">
+        <view
+          wx:for="{{taskCells}}"
+          wx:key="index"
+          class="progress-cell {{item.done ? 'done' : (item.current ? 'current' : '')}}"
+        ></view>
+      </view>
+      <view class="btn-primary" bindtap="onResume">继续报默</view>
+    </block>
+    <block wx:else>
+      <view class="task-title">语文 · 三年级上册</view>
+      <view class="muted task-hint">从词库选一课开始今天的报默吧</view>
+      <view class="progress-track">
+        <view wx:for="{{[0,1,2,3,4,5,6,7,8,9]}}" wx:key="*this" class="progress-cell"></view>
+      </view>
+      <view class="btn-primary" bindtap="goVocab">去报默</view>
+    </block>
   </view>
 
   <!-- 两大模块卡 -->
   <view class="module-grid">
-    <view class="module-card module-cn">
+    <view class="module-card module-cn" bindtap="goVocab">
       <view class="module-name">柠檬字词</view>
       <view class="module-desc">识字 · 写字 · 词语</view>
     </view>
@@ -36,9 +41,22 @@
     </view>
   </view>
 
-  <!-- 上周正确率 -->
-  <view class="card">
-    <view class="tag tag-green">上周正确率</view>
-    <view class="muted stat-hint">本地统计 D5 接入</view>
+  <!-- 统计卡 -->
+  <view class="card" bindtap="goWrongBook">
+    <view class="tag tag-green">学习统计</view>
+    <view class="stat-row">
+      <view class="stat-block">
+        <view class="stat-num">{{weeklyAccuracy === null ? '—' : weeklyAccuracy + '%'}}</view>
+        <view class="muted stat-label">近 7 天正确率</view>
+      </view>
+      <view class="stat-block">
+        <view class="stat-num">{{sessionCount}}</view>
+        <view class="muted stat-label">本周报默</view>
+      </view>
+      <view class="stat-block">
+        <view class="stat-num {{wrongCount ? 'stat-red' : ''}}">{{wrongCount}}</view>
+        <view class="muted stat-label">错词在池 ›</view>
+      </view>
+    </view>
   </view>
 </view>
