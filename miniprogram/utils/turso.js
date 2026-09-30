@@ -1,11 +1,21 @@
 /* Turso (libsql) HTTP 客户端 —— /v2/pipeline
-   连接配置在 config/config.js（gitignore，不提交） */
-const config = require("../config/config");
+   连接配置在 config/config.js（gitignore，不提交）
+   config.js 缺失时 exec 恒 reject，云同步静默失败，主流程不受影响 */
+let config = null;
+try {
+  config = require("../config/config");
+} catch (e) {
+  config = null;
+}
 
-const API_URL = `https://${config.turso.host}/v2/pipeline`;
+const API_URL = config ? `https://${config.turso.host}/v2/pipeline` : "";
 
 function request(stmt) {
   return new Promise((resolve, reject) => {
+    if (!config || !config.turso || !config.turso.host) {
+      reject(new Error("turso config missing"));
+      return;
+    }
     wx.request({
       url: API_URL,
       method: "POST",
