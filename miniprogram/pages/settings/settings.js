@@ -3,6 +3,7 @@
    报默页 onLoad 时读 settings，改完下次报默即生效（无需重启）
    清空数据：二次确认 → 本地 storage 全清 → 重新初始化默认值 */
 const store = require("../../utils/store");
+const tts = require("../../utils/tts");
 
 function rateLabel(rate) {
   const r = Number(rate) || 0;
@@ -13,10 +14,23 @@ function rateLabel(rate) {
   return "🐇 很快";
 }
 
+/* 腾讯云 TTS 音色（TextToVoice 直支持 6 位 ID）
+   覆盖女声 / 男声 / 童声，点卡片试听并选中 */
+const VOICES = [
+  { id: 101001, name: "智瑜", tag: "温柔女声", mark: "瑜" },
+  { id: 101004, name: "智云", tag: "沉稳男声", mark: "云" },
+  { id: 101016, name: "智甜", tag: "女童声", mark: "甜" },
+  { id: 101015, name: "智萌", tag: "男童声", mark: "萌" },
+  { id: 403000, name: "云小朵", tag: "俏皮女童", mark: "朵" },
+  { id: 502007, name: "智小虎", tag: "活力童声", mark: "虎" },
+];
+
 Page({
   data: {
     s: null, // settings 快照
     rateText: "正常",
+    voices: VOICES,
+    previewingId: 0, // 正在试听的音色 id
   },
 
   onLoad() {
@@ -53,6 +67,24 @@ Page({
   onPinyinToggle(e) {
     const s = store.saveSettings({ showPinyin: !!e.detail.value });
     this.setData({ s });
+  },
+
+  /* ---------- 音色：点击 = 试听 + 选中 ---------- */
+  onVoiceTap(e) {
+    const id = Number(e.currentTarget.dataset.id);
+    const v = VOICES.find((x) => x.id === id);
+    if (!v) return;
+    const s = store.saveSettings({ voiceType: id });
+    this.setData({ s, previewingId: id });
+    tts.speak(`你好呀，我是${v.name}，今天也要好好写字哦。`, {
+      rate: s.speechRate || 0,
+      voiceType: id,
+      onDone: () => this.setData({ previewingId: 0 }),
+      onError: () => {
+        this.setData({ previewingId: 0 });
+        wx.showToast({ title: "试听失败，请检查网络", icon: "none" });
+      },
+    });
   },
 
   /* ---------- 清空全部数据（二次确认） ---------- */
