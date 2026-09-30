@@ -1,8 +1,77 @@
 <view class="page-body">
-  <view class="card">
-    <view class="tag tag-amber">拍照批改</view>
-    <view class="placeholder-title">拍下作业纸，逐词判对错</view>
-    <view class="muted">报默结束后自动进入；OCR 识别只做预判，家长手动改判兜底（D4 接入）</view>
-    <view class="btn-primary photo-btn">拍照 / 相册</view>
-  </view>
+  <!-- ===== pick：词表确认 + 开始拍照 ===== -->
+  <block wx:if="{{phase === 'pick'}}">
+    <view class="card">
+      <view class="tag tag-blue">{{unitTitle}} · {{listName}}</view>
+      <view class="section-label">把 {{words.length}} 个词写在本子上，写完拍给我批改</view>
+      <view class="preview-list">
+        <view class="preview-item" wx:for="{{preview}}" wx:key="index">
+          <text class="preview-word">{{item.word}}</text>
+          <text class="preview-pinyin muted">{{item.pinyin}}</text>
+        </view>
+      </view>
+      <view class="btn-primary pc-btn" bindtap="onTake">📷 拍照批改</view>
+    </view>
+  </block>
+
+  <!-- ===== shooting：识别中 ===== -->
+  <block wx:if="{{phase === 'shooting'}}">
+    <view class="card pc-center">
+      <image class="pc-img" src="{{imgPath}}" mode="aspectFit" />
+      <view class="pc-ocr-state muted">{{ocrState === 'loading' ? '🔍 识别中…' : ''}}</view>
+    </view>
+  </block>
+
+  <!-- ===== confirm：逐词确认 ===== -->
+  <block wx:if="{{phase === 'confirm'}}">
+    <view class="card">
+      <view class="tag tag-amber">{{unitTitle}} · {{listName}} · 共 {{items.length}} 词</view>
+      <view class="muted pc-hint" wx:if="{{ocrState === 'ok'}}">AI 已预判，点按词条可改判（对 → 错 → 跳过）</view>
+      <view class="muted pc-hint pc-warn" wx:if="{{ocrState === 'fail'}}">⚠ {{ocrMsg}}，请逐词手动判</view>
+
+      <view
+        wx:for="{{items}}"
+        wx:key="word"
+        class="match-item {{item.judge === 'ok' ? 'mi-ok' : (item.judge === 'wrong' ? 'mi-wrong' : 'mi-skip')}}"
+        bindtap="toggleJudge"
+        data-index="{{index}}"
+      >
+        <view class="mi-left">
+          <text class="mi-word">{{item.word}}</text>
+          <text class="muted mi-pinyin">{{item.pinyin}}</text>
+        </view>
+        <view class="mi-mid muted" wx:if="{{item.ocr}}">识别：{{item.ocr}}</view>
+        <view class="mi-chip">{{item.judge === 'ok' ? '✓ 对' : (item.judge === 'wrong' ? '✗ 错' : '— 跳过')}}</view>
+      </view>
+
+      <view class="btn-primary pc-btn" bindtap="onSubmit">完成批改</view>
+    </view>
+  </block>
+
+  <!-- ===== done：结果 ===== -->
+  <block wx:if="{{phase === 'done'}}">
+    <view class="card pc-center">
+      <view class="done-title">批改完成 🍋</view>
+      <view class="done-score">
+        <text class="done-pct {{result.correct === result.total ? 'pct-good' : 'pct-mid'}}">{{result.pct}}%</text>
+        <text class="muted done-sub">判 {{result.total}} 词 · 对 {{result.correct}}</text>
+      </view>
+
+      <block wx:if="{{result.wrongList.length}}">
+        <view class="done-sec">错词（已进错题本）</view>
+        <view class="preview-list">
+          <view class="preview-item wrong-item" wx:for="{{result.wrongList}}" wx:key="word">
+            <text class="preview-word">{{item.word}}</text>
+            <text class="preview-pinyin muted">{{item.pinyin}}</text>
+          </view>
+        </view>
+        <view class="btn-primary pc-btn" bindtap="onRetryWrong">只练错词（{{result.wrongList.length}}）</view>
+      </block>
+
+      <view class="ctrl-row">
+        <view class="btn-ghost ctrl-btn" bindtap="onTake">再批一张</view>
+        <view class="btn-ghost ctrl-btn" bindtap="onBack">回词库</view>
+      </view>
+    </view>
+  </block>
 </view>
