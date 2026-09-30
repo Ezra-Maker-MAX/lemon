@@ -1,0 +1,32 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/vocab/vocab",
+    "pages/dictation/dictation",
+    "pages/photo-check/photo-check",
+    "pages/review/review",
+    "pages/wrong-book/wrong-book",
+    "pages/settings/settings"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#FFD43B",
+    "navigationBarTitleText": "柠檬字词",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#FDFCF7",
+    "backgroundTextStyle": "light"
+  },
+  "tabBar": {
+    "color": "#8A8A80",
+    "selectedColor": "#2B3A55",
+    "backgroundColor": "#FDFCF7",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "首页" },
+      { "pagePath": "pages/wrong-book/wrong-book", "text": "错题本" },
+      { "pagePath": "pages/settings/settings", "text": "设置" }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}
