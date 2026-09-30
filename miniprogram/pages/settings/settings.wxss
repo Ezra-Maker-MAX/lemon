@@ -1,0 +1,25 @@
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid var(--line);
+  font-size: 28rpx;
+}
+.setting-row:last-child {
+  border-bottom: none;
+}
+.danger-btn {
+  text-align: center;
+  padding: 24rpx 0;
+  border-radius: var(--radius-btn);
+  background: var(--fill-red);
+  color: var(--ink-red);
+  font-size: 30rpx;
+  font-weight: 500;
+}
+.danger-hint {
+  font-size: 22rpx;
+  text-align: center;
+  margin-top: 16rpx;
+}
