@@ -1,0 +1,8 @@
+<view class="page-body">
+  <view class="card">
+    <view class="tag tag-amber">拍照批改</view>
+    <view class="placeholder-title">拍下作业纸，逐词判对错</view>
+    <view class="muted">报默结束后自动进入；OCR 识别只做预判，家长手动改判兜底（D4 接入）</view>
+    <view class="btn-primary photo-btn">拍照 / 相册</view>
+  </view>
+</view>
