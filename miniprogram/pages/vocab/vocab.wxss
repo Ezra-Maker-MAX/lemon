@@ -1,0 +1,24 @@
+.term-switch {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 20rpx;
+}
+.term-option {
+  padding: 14rpx 40rpx;
+  border-radius: var(--radius-btn);
+  border: 1rpx solid var(--line);
+  font-size: 26rpx;
+  color: var(--muted);
+  background: var(--paper);
+}
+.term-option.active {
+  background: var(--ink);
+  color: var(--lemon);
+  border-color: var(--ink);
+  font-weight: 500;
+}
+.list-type-row {
+  display: flex;
+  gap: 16rpx;
+  margin: 20rpx 0 12rpx;
+}
