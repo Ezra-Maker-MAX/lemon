@@ -1,1 +1,47 @@
-/* 复习报默复用报默页样式，D5 补齐 */
+.rv-title {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--ink);
+  margin-top: 16rpx;
+}
+.rv-hint { font-size: 24rpx; margin-top: 8rpx; }
+
+.rv-stepper {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  margin-top: 24rpx;
+}
+.step-btn {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2rpx solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  color: var(--ink);
+}
+.step-num { font-size: 30rpx; font-weight: 600; color: var(--ink); }
+
+.rv-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-top: 24rpx;
+}
+.rv-chip {
+  background: var(--paper);
+  border: 2rpx solid var(--line);
+  border-radius: 16rpx;
+  padding: 10rpx 20rpx;
+  display: flex;
+  align-items: baseline;
+  gap: 10rpx;
+}
+.rv-chip-word { font-size: 34rpx; font-weight: 600; color: var(--ink); }
+.rv-chip-pinyin { font-size: 22rpx; }
+
+.rv-start { margin-top: 32rpx; }
