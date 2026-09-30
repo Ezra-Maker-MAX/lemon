@@ -1,0 +1,66 @@
+@import "styles/tokens.wxss";
+
+page {
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 28rpx;
+  line-height: 1.6;
+}
+
+/* 通用卡片 */
+.card {
+  background: #fff;
+  border: 1rpx solid var(--line);
+  border-radius: var(--radius-card);
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+}
+
+/* 主按钮（墨蓝底柠檬字） */
+.btn-primary {
+  background: var(--ink);
+  color: var(--lemon);
+  border-radius: var(--radius-btn);
+  font-size: 30rpx;
+  font-weight: 500;
+  text-align: center;
+  padding: 24rpx 0;
+}
+
+.btn-ghost {
+  background: var(--paper);
+  color: var(--ink);
+  border: 1rpx solid #D8D4C2;
+  border-radius: var(--radius-btn);
+  font-size: 30rpx;
+  font-weight: 500;
+  text-align: center;
+  padding: 24rpx 0;
+}
+
+/* 小标签 */
+.tag {
+  border-radius: 16rpx;
+  padding: 10rpx 20rpx;
+  font-size: 22rpx;
+  display: inline-block;
+}
+.tag-amber { background: var(--fill-amber); color: var(--ink-amber); }
+.tag-blue { background: var(--fill-blue); color: var(--ink-blue); }
+.tag-red { background: var(--fill-red); color: var(--ink-red); }
+.tag-green { background: var(--fill-green); color: var(--ink-green); }
+
+.muted { color: var(--muted); }
+
+/* 页面通用容器 */
+.page-body {
+  padding: 24rpx;
+}
+
+/* D1 空壳占位标题 */
+.placeholder-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 20rpx 0 8rpx;
+}
