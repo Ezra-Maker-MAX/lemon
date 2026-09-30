@@ -6,7 +6,11 @@
     "pages/photo-check/photo-check",
     "pages/review/review",
     "pages/wrong-book/wrong-book",
-    "pages/settings/settings"
+    "pages/settings/settings",
+    "pages/pinyin-write/pinyin-write",
+    "pages/polyphone/polyphone",
+    "pages/poem/poem",
+    "pages/sheet/sheet"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FFD43B",
