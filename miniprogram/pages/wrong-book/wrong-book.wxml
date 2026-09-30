@@ -1,4 +1,27 @@
 <view class="page-body">
+  <!-- 周报（M2） -->
+  <view class="card">
+    <view class="tag tag-amber">本周错词周报</view>
+    <view class="wb-week-stat">
+      <text class="wb-week-num {{weekly.pct !== null && weekly.pct >= 80 ? 'wb-good' : ''}}">{{weekly.pct === null ? '—' : weekly.pct + '%'}}</text>
+      <text class="muted wb-week-sub">近 7 天正确率 · 错 {{weekly.weekWrong}} 词 / 共 {{weekly.weekTotal}} 词</text>
+    </view>
+    <view class="wb-bars">
+      <view class="wb-bar-col" wx:for="{{weekly.bars}}" wx:key="label">
+        <view class="wb-bar-wrap">
+          <view class="wb-bar" style="height: {{item.h ? item.h : 4}}rpx;"></view>
+        </view>
+        <view class="muted wb-bar-label">{{item.label}}</view>
+      </view>
+    </view>
+    <block wx:if="{{weekly.topWrong.length}}">
+      <view class="muted wb-top-label">重点盯防：</view>
+      <view class="wb-top-row">
+        <text class="wb-top-word" wx:for="{{weekly.topWrong}}" wx:key="*this">{{item}}</text>
+      </view>
+    </block>
+  </view>
+
   <!-- 空态 -->
   <view class="card" wx:if="{{!items.length}}">
     <view class="tag tag-red">错题本</view>
