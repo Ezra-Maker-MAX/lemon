@@ -1,0 +1,36 @@
+<view class="page-body">
+  <!-- hero：薄荷绿签名 -->
+  <view class="en-hero">
+    <view class="en-hero-title">柠檬单词 🍋</view>
+    <view class="en-hero-sub">PEP 三年级上册 · 四线三格</view>
+  </view>
+
+  <view class="page-body">
+    <!-- 单元切换 -->
+    <view class="card">
+      <view class="tag tag-mint">选单元</view>
+      <view class="chip-row">
+        <view
+          wx:for="{{units}}" wx:key="unit"
+          class="chip {{unit === item.unit ? 'chip-on' : ''}}"
+          bindtap="onPickUnit" data-unit="{{item.unit}}"
+        >Unit {{item.unit}}</view>
+      </view>
+    </view>
+
+    <!-- 词卡：四线三格 -->
+    <view class="card en-words-card">
+      <view class="tag tag-mint">{{unitTitle}}</view>
+      <view class="muted en-hint">点单词听发音，跟读两遍再动笔</view>
+      <view class="en-word-row" wx:for="{{words}}" wx:key="en" bindtap="onSpeak" data-en="{{item.en}}">
+        <view class="four-line">
+          <text class="four-line-word">{{item.en}}</text>
+        </view>
+        <view class="en-zh">{{item.zh}}</view>
+        <view class="en-speak">🔊</view>
+      </view>
+
+      <view class="btn-primary en-start" bindtap="goDictation">听音拼写 · 开始报默</view>
+    </view>
+  </view>
+</view>
