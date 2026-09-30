@@ -1,0 +1,69 @@
+/* 英语报默 */
+.en-card { display: flex; flex-direction: column; align-items: center; }
+
+.ed-status {
+  font-size: 28rpx;
+  color: var(--muted);
+  margin: 24rpx 0 8rpx;
+}
+.ed-status.is-speaking { color: var(--ink); font-weight: 500; }
+.ed-zh {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #2E7D57;
+}
+
+/* 四线三格揭示区 */
+.ed-line {
+  width: 100%;
+  box-sizing: border-box;
+  height: 140rpx;
+  margin-top: 28rpx;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 24rpx 4rpx;
+  border-radius: 8rpx;
+}
+.ed-empty { align-items: center; justify-content: center; }
+.ed-q {
+  font-size: 80rpx;
+  color: #BCDDCB;
+  font-weight: 700;
+}
+
+.ed-btn { margin-top: 24rpx; text-align: center; }
+.judge-row { display: flex; gap: 24rpx; margin-top: 24rpx; width: 100%; }
+.judge-btn {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  border-radius: var(--radius-btn);
+  font-size: 30rpx;
+  font-weight: 500;
+}
+.judge-wrong { background: var(--fill-red); color: var(--ink-red); }
+.judge-right { background: var(--fill-green); color: var(--ink-green); }
+.ctrl-row { display: flex; gap: 24rpx; margin-top: 24rpx; }
+.ctrl-btn { flex: 1; text-align: center; }
+
+/* done */
+.done-title { font-size: 36rpx; font-weight: 600; margin-bottom: 12rpx; }
+.done-score { display: flex; align-items: baseline; gap: 20rpx; margin-bottom: 16rpx; }
+.done-pct { font-size: 96rpx; font-weight: 700; }
+.pct-good { color: var(--green-ok); }
+.pct-mid { color: var(--ink-amber); }
+.done-sub { font-size: 26rpx; }
+.done-sec { font-size: 26rpx; font-weight: 500; margin: 12rpx 0; }
+.ed-wrong-list { width: 100%; margin-bottom: 10rpx; }
+.ed-wrong-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 14rpx 8rpx;
+  border-bottom: 1rpx dashed var(--line);
+}
+.ed-wrong-en {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: var(--red-pen);
+  font-family: Georgia, "Times New Roman", serif;
+}
