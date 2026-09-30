@@ -79,11 +79,7 @@
 }
 .type-green { background: var(--fill-green); color: var(--ink-green); border-color: transparent; }
 .type-amber { background: var(--fill-amber); color: var(--ink-amber); border-color: transparent; }
-.type-disabled {
-  background: var(--paper);
-  color: var(--muted);
-  border-color: var(--line);
-}
+.type-blue { background: var(--fill-blue); color: var(--ink-blue); border-color: transparent; }
 .type-active {
   border: 2rpx solid var(--ink);
   font-weight: 600;
