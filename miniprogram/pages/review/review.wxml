@@ -1,7 +1,22 @@
 <view class="page-body">
   <view class="card">
-    <view class="tag tag-green">复习报默</view>
-    <view class="placeholder-title">错词复习卷</view>
-    <view class="muted">从错题本一键生成，复用报默页逻辑（D5 接入）</view>
+    <view class="tag tag-green">复习卷</view>
+    <view class="rv-title">错词复习 · {{poolSize}} 词在池</view>
+    <view class="muted rv-hint">错得多的排前面；判对连满 3 次自动毕业</view>
+
+    <view class="rv-stepper">
+      <view class="step-btn" bindtap="decCount">−</view>
+      <view class="step-num">{{count}} 词</view>
+      <view class="step-btn" bindtap="incCount">＋</view>
+    </view>
+
+    <view class="rv-chips">
+      <view class="rv-chip" wx:for="{{words}}" wx:key="word">
+        <text class="rv-chip-word">{{item.word}}</text>
+        <text class="rv-chip-pinyin muted" wx:if="{{item.pinyin}}">{{item.pinyin}}</text>
+      </view>
+    </view>
+
+    <view class="btn-primary rv-start" bindtap="onStart">开始复习报默</view>
   </view>
 </view>
