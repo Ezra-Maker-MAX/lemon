@@ -5,23 +5,29 @@
       <view class="tag tag-amber">练习单</view>
       <view class="muted sh-hint">生成田字格练习单，截图即可打印</view>
 
-      <view class="sec-label">单元</view>
-      <view class="chip-row">
-        <view
-          wx:for="{{units}}" wx:key="unit"
-          class="chip {{unit === item.unit ? 'chip-on' : ''}}"
-          bindtap="onPickUnit" data-unit="{{item.unit}}"
-        >{{item.title}}</view>
-      </view>
+      <block wx:if="{{isCustom}}">
+        <view class="sec-label">词单：{{customName}}</view>
+        <view class="btn-primary sh-start" bindtap="onGenerate">生成练习单</view>
+      </block>
+      <block wx:else>
+        <view class="sec-label">单元</view>
+        <view class="chip-row">
+          <view
+            wx:for="{{units}}" wx:key="unit"
+            class="chip {{unit === item.unit ? 'chip-on' : ''}}"
+            bindtap="onPickUnit" data-unit="{{item.unit}}"
+          >{{item.title}}</view>
+        </view>
 
-      <view class="sec-label">词表</view>
-      <view class="chip-row">
-        <view class="chip chip-blue {{listType === 'shizi' ? 'chip-on' : ''}}" bindtap="onPickList" data-list="shizi">识字表</view>
-        <view class="chip chip-green {{listType === 'xiezi' ? 'chip-on' : ''}}" bindtap="onPickList" data-list="xiezi">写字表</view>
-        <view class="chip chip-amber {{listType === 'ciyu' ? 'chip-on' : ''}}" bindtap="onPickList" data-list="ciyu">词语表</view>
-      </view>
+        <view class="sec-label">词表</view>
+        <view class="chip-row">
+          <view class="chip chip-blue {{listType === 'shizi' ? 'chip-on' : ''}}" bindtap="onPickList" data-list="shizi">识字表</view>
+          <view class="chip chip-green {{listType === 'xiezi' ? 'chip-on' : ''}}" bindtap="onPickList" data-list="xiezi">写字表</view>
+          <view class="chip chip-amber {{listType === 'ciyu' ? 'chip-on' : ''}}" bindtap="onPickList" data-list="ciyu">词语表</view>
+        </view>
 
-      <view class="btn-primary sh-start" bindtap="onGenerate">生成练习单（随机 16 词）</view>
+        <view class="btn-primary sh-start" bindtap="onGenerate">生成练习单（随机 16 词）</view>
+      </block>
     </view>
   </block>
 
@@ -30,6 +36,7 @@
     <view class="sh-toolbar">
       <view class="btn-ghost sh-tool-btn" bindtap="onBack">‹ 重选</view>
       <view class="btn-ghost sh-tool-btn" bindtap="onShuffle">🔀 换一批</view>
+      <view class="btn-ghost sh-tool-btn" bindtap="onExport">🖼 存为图片</view>
     </view>
 
     <!-- A4 练习纸 -->
@@ -55,5 +62,8 @@
 
       <view class="paper-foot">柠檬字词 · 柠檬黄陪每天进步一点点</view>
     </view>
+
+    <!-- 导出画布（离屏） -->
+    <canvas type="2d" id="sheetCanvas" class="export-canvas"></canvas>
   </block>
 </view>
