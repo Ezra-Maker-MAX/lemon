@@ -1,0 +1,51 @@
+<view class="page-body">
+  <!-- ===== 编辑/新建 ===== -->
+  <view class="card" wx:if="{{editing}}">
+    <view class="tag tag-amber">{{editId ? '编辑词单' : '新建词单'}}</view>
+    <input
+      class="cl-name"
+      placeholder="词单名称（如：易错词集中营）"
+      value="{{name}}"
+      bindinput="onName"
+      maxlength="12"
+    />
+    <textarea
+      class="cl-raw"
+      placeholder="输入词语，用空格 / 逗号 / 换行分隔&#10;例：明月 早餐 骄傲 温柔"
+      value="{{raw}}"
+      bindinput="onRaw"
+      maxlength="600"
+      auto-height
+    />
+    <view class="muted cl-count">已识别 {{editWordCount}} 个词 · 保存后自动补拼音</view>
+    <view class="cl-btn-row">
+      <view class="btn-ghost cl-btn" bindtap="onCancel">取消</view>
+      <view class="btn-primary cl-btn" bindtap="onSave">保存</view>
+    </view>
+  </view>
+
+  <!-- ===== 列表 ===== -->
+  <block wx:else>
+    <view class="card">
+      <view class="tag tag-amber">自定义词表</view>
+      <view class="muted cl-hint">课本外的词单：课后生字、易错词、课文词语都行</view>
+      <view class="btn-primary cl-new" bindtap="onNew">＋ 新建词单</view>
+    </view>
+
+    <view class="card" wx:for="{{lists}}" wx:key="id">
+      <view class="cl-head">
+        <view class="cl-title">{{item.name}}</view>
+        <view class="muted">{{item.words.length}} 词</view>
+      </view>
+      <view class="muted cl-preview">{{item.preview}}{{item.more ? ' …' : ''}}</view>
+
+      <view class="cl-actions">
+        <view class="cl-act" bindtap="goDictation" data-id="{{item.id}}">🔊 报默</view>
+        <view class="cl-act" bindtap="goPinyin" data-id="{{item.id}}">🔤 看拼音写</view>
+        <view class="cl-act" bindtap="goSheet" data-id="{{item.id}}">📄 练习单</view>
+        <view class="cl-act" bindtap="onEdit" data-id="{{item.id}}">✏️ 编辑</view>
+        <view class="cl-act cl-del" bindtap="onDelete" data-id="{{item.id}}">🗑 删除</view>
+      </view>
+    </view>
+  </block>
+</view>
