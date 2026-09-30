@@ -20,7 +20,7 @@
         data-unit="{{item.unit}}"
       >
         <view class="unit-name">{{item.title}}</view>
-        <view class="unit-count muted">写 {{item.counts.xiezi}} · 词 {{item.counts.ciyu}}</view>
+        <view class="unit-count muted">认 {{item.counts.shizi}} · 写 {{item.counts.xiezi}} · 词 {{item.counts.ciyu}}</view>
       </view>
     </view>
   </view>
@@ -29,11 +29,11 @@
   <view class="card">
     <view class="section-label">表类型</view>
     <view class="list-type-row">
+      <view class="type-btn {{listType === 'shizi' ? 'type-active' : ''}} type-blue" bindtap="pickListType" data-type="shizi">识字表</view>
       <view class="type-btn {{listType === 'xiezi' ? 'type-active' : ''}} type-green" bindtap="pickListType" data-type="xiezi">写字表</view>
       <view class="type-btn {{listType === 'ciyu' ? 'type-active' : ''}} type-amber" bindtap="pickListType" data-type="ciyu">词语表</view>
-      <view class="type-btn type-disabled">识字表</view>
     </view>
-    <view class="muted type-hint">识字表待家长对照课本校对后开放</view>
+    <view class="muted type-hint">识字表为会认字（报默认读，预习用）</view>
   </view>
 
   <!-- 词数 -->
