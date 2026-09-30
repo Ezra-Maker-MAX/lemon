@@ -1,0 +1,51 @@
+<view class="page-body">
+  <!-- ===== ready ===== -->
+  <block wx:if="{{phase === 'ready'}}">
+    <view class="card">
+      <view class="tag tag-amber">多音字</view>
+      <view class="muted pp-hint">一词一读，选出正确的读音。每轮 {{8}} 题，全部来自课本常见字</view>
+      <view class="btn-primary pp-start" bindtap="onStart">开始练习</view>
+    </view>
+  </block>
+
+  <!-- ===== running ===== -->
+  <block wx:if="{{phase === 'running'}}">
+    <view class="card pp-card">
+      <view class="tag tag-amber">多音字 · {{index + 1}}/{{questions.length}}</view>
+
+      <view class="pp-word">
+        <text wx:for="{{current.word}}" wx:key="index" class="{{current.word[index] === current.char ? 'pp-hl' : ''}}">{{current.word[index]}}</text>
+      </view>
+      <view class="pp-q">这个词里的「{{current.char}}」读什么？</view>
+
+      <view class="pp-options">
+        <view
+          wx:for="{{current.options}}" wx:key="*this"
+          class="pp-opt {{current.judged && item === current.answer ? 'opt-right' : ''}} {{current.judged && item === current.picked && !current.ok ? 'opt-wrong' : ''}}"
+          bindtap="onPick" data-py="{{item}}"
+        >{{item}}</view>
+      </view>
+
+      <view class="pp-tip" wx:if="{{current.judged}}">
+        <text class="{{current.ok ? 'tip-ok' : 'tip-bad'}}">{{current.ok ? '✓ 答对了' : '✗ 读 ' + current.picked + ' 了'}}</text>
+        <view class="muted pp-tip-detail">{{current.tip}}</view>
+      </view>
+    </view>
+
+    <view class="btn-primary pp-next" wx:if="{{current.judged}}" bindtap="onNext">
+      {{index + 1 === questions.length ? '看结果' : '下一题'}}
+    </view>
+  </block>
+
+  <!-- ===== done ===== -->
+  <block wx:if="{{phase === 'done'}}">
+    <view class="card pp-card">
+      <view class="done-title">本轮完成 🍋</view>
+      <view class="done-score">
+        <text class="done-pct {{result.correct === result.total ? 'pct-good' : 'pct-mid'}}">{{result.pct}}%</text>
+        <text class="muted done-sub">对 {{result.correct}} / {{result.total}}</text>
+      </view>
+      <view class="btn-primary pp-start" bindtap="onRestart">再练一轮</view>
+    </view>
+  </block>
+</view>
