@@ -88,3 +88,29 @@
 }
 .stat-num.stat-red { color: var(--red-pen); }
 .stat-label { font-size: 22rpx; margin-top: 4rpx; }
+
+/* 更多练法四宫格 */
+.extra-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+  margin-top: 16rpx;
+}
+.extra-item {
+  width: calc((100% - 60rpx) / 4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+  padding: 24rpx 0 20rpx;
+  border-radius: var(--radius-btn);
+  border: 2rpx solid var(--line);
+  background: var(--paper);
+}
+.extra-item:active { background: #FFF8E1; }
+.extra-icon { font-size: 44rpx; }
+.extra-name {
+  font-size: 22rpx;
+  color: var(--ink);
+  text-align: center;
+}
