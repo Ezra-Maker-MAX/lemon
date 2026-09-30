@@ -1,0 +1,11 @@
+# 密钥与本地配置，绝不入库
+config/turso.json
+config/*.local.json
+**/project.private.config.json
+
+# WorkBuddy 会话数据
+.workbuddy/
+
+# 依赖与构建产物
+node_modules/
+dist/
