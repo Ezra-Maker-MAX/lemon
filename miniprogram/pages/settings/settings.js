@@ -21,8 +21,8 @@ const VOICES = [
   { id: 101004, name: "智云", tag: "沉稳男声", mark: "云" },
   { id: 101016, name: "智甜", tag: "女童声", mark: "甜" },
   { id: 101015, name: "智萌", tag: "男童声", mark: "萌" },
-  { id: 403000, name: "云小朵", tag: "俏皮女童", mark: "朵" },
-  { id: 502007, name: "智小虎", tag: "活力童声", mark: "虎" },
+  { id: 101002, name: "智聆", tag: "知性女声", mark: "聆" },
+  { id: 101006, name: "智言", tag: "阳光男声", mark: "言" },
 ];
 
 Page({
