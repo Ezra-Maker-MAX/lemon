@@ -233,3 +233,72 @@
 .ex-error { font-size: 24rpx; color: var(--ink-red); }
 .ex-meaning { font-size: 27rpx; line-height: 1.7; }
 .ex-row { font-size: 24rpx; margin-top: 10rpx; line-height: 1.6; }
+
+/* 看写法：田字格逐字揭示（M2.3） */
+.zh-reveal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  justify-content: center;
+  margin-top: 22rpx;
+}
+.zg-cell {
+  position: relative;
+  width: 150rpx;
+  height: 150rpx;
+  box-sizing: border-box;
+  border: 3rpx solid rgba(217, 83, 79, 0.75);
+  border-radius: 8rpx;
+  background-image:
+    linear-gradient(to right, transparent calc(50% - 1rpx), rgba(217, 83, 79, 0.35) calc(50% - 1rpx), rgba(217, 83, 79, 0.35) calc(50% + 1rpx), transparent calc(50% + 1rpx)),
+    linear-gradient(to bottom, transparent calc(50% - 1rpx), rgba(217, 83, 79, 0.35) calc(50% - 1rpx), rgba(217, 83, 79, 0.35) calc(50% + 1rpx), transparent calc(50% + 1rpx));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 96rpx;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+/* 看写法按钮（M2.3） */
+.reveal-btn {
+  margin-top: 16rpx;
+  text-align: center;
+  font-size: 24rpx;
+  color: var(--ink-blue);
+  padding: 18rpx 0;
+}
+
+/* 判错逐字定位（M2.3） */
+.hw-detail { margin-top: 14rpx; }
+.hw-detail-cells {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  justify-content: center;
+}
+.hd-cell {
+  width: 96rpx;
+  height: 118rpx;
+  box-sizing: border-box;
+  border: 2rpx solid var(--line);
+  border-radius: 8rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rpx;
+}
+.hd-ch { font-size: 56rpx; line-height: 1.1; color: var(--ink); }
+.hd-sub { font-size: 20rpx; line-height: 1.1; color: #9CA3AF; }
+.hd-cell.ok { border-color: var(--green-ok); background: rgba(78, 155, 90, 0.08); }
+.hd-cell.bad { border-color: var(--ink-red); background: var(--fill-red); }
+.hd-cell.bad .hd-ch { color: var(--ink-red); }
+.hd-cell.miss { border-style: dashed; }
+.hd-hint {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: var(--ink-red);
+  text-align: center;
+  line-height: 1.6;
+}
