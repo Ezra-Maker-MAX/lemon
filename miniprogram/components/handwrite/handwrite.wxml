@@ -1,0 +1,8 @@
+<canvas
+  id="{{canvasId}}"
+  type="2d"
+  class="hw-canvas"
+  bindtouchstart="onStart"
+  bindtouchmove="onMove"
+  bindtouchend="onEnd"
+></canvas>
