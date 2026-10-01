@@ -6,7 +6,7 @@ const enVocab = require("../../data/vocab/english/index");
 const store = require("../../utils/store");
 const tts = require("../../utils/tts");
 
-const EN_VOICE = 403006;
+const EN_VOICE = 101016; // 智甜·女童声（基础音色）
 
 Page({
   data: {
@@ -64,7 +64,10 @@ Page({
       voiceType: EN_VOICE,
       rate: -0.2,
       onDone: () => this.setData({ speaking: false }),
-      onError: () => this.setData({ speaking: false }),
+      onError: () => {
+        this.setData({ speaking: false });
+        wx.showToast({ title: "发音失败，可点「再听一次」重试", icon: "none" });
+      },
     });
   },
 
