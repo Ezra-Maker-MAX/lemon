@@ -1,7 +1,11 @@
 <view class="page-body">
   <!-- 教材信息头 -->
   <view class="grade-head">
-    <view class="grade-main">三年级 · 人教版</view>
+    <view class="grade-picker">
+      <view class="grade-option {{grade === 3 ? 'active' : ''}}" bindtap="pickGrade" data-grade="3">三年级</view>
+      <view class="grade-option {{grade === 4 ? 'active' : ''}}" bindtap="pickGrade" data-grade="4">四年级</view>
+    </view>
+    <view class="grade-main">{{grade === 4 ? '四年级' : '三年级'}} · 人教版</view>
     <view class="term-switch">
       <view class="term-option {{term === 1 ? 'active' : ''}}" bindtap="pickTerm" data-term="1">上册</view>
       <view class="term-option {{term === 2 ? 'active' : ''}}" bindtap="pickTerm" data-term="2">下册</view>
