@@ -202,10 +202,13 @@ Page({
       example: "",
     };
     if (this.data.explain) {
-      // 已展示本地层 → 第二层：LLM 增强
+      // 已展示本地层 → 第二层：LLM 增强（3s 函数超时多为冷启动，自动重试一次）
       this.setData({ explain: { ...local, loading: true } });
-      wx.cloud
-        .callFunction({ name: "ai", data: { action: "explain", lang: "en", word: w.en } })
+      const call = (data) =>
+        wx.cloud.callFunction({ name: "ai", data }).catch(() =>
+          wx.cloud.callFunction({ name: "ai", data })
+        );
+      call({ action: "explain", lang: "en", word: w.en })
         .then((r) => {
           const out = r && r.result;
           if (out && out.code === "OK" && out.data && !out.data.error) {
