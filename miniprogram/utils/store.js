@@ -202,8 +202,9 @@ const deleteCustomList = (lid) => {
 /* 自定义词补拼音：从课本词库建 字→拼音 映射，逐字拼 */
 function fillPinyinForCustom() {
   const vocab = require("../data/vocab/index");
+  const grade = (module.exports.getProfile ? module.exports.getProfile().grade : 0) || 3;
   const charMap = {};
-  const gradeWords = vocab.getAllWords(3, 1);
+  let gradeWords = vocab.getAllWords(grade, 1).concat(vocab.getAllWords(grade, 2));
   gradeWords.forEach((w) => {
     const pys = String(w.pinyin || "").split(/\s+/);
     w.word.split("").forEach((ch, i) => {
