@@ -11,7 +11,7 @@ const OcrClient = require("tencentcloud-sdk-nodejs-ocr").ocr.v20181119.Client;
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 
-/* Agnes LLM 配置：环境变量优先，其次 config.json（随函数部署但不入库） */
+/* Agnes LLM 配置：环境变量优先，其次 llm.json（随函数部署但不入库） */
 function loadLLMConfig() {
   if (process.env.AGNES_API_KEY) {
     return { baseUrl: "https://apihub.agnes-ai.com/v1", apiKey: process.env.AGNES_API_KEY, model: "agnes-2.5-flash" };
@@ -38,6 +38,7 @@ async function callLLM(cfg, prompt, maxTokens) {
   const { status, json } = await httpJson(cfg.baseUrl + "/chat/completions", {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${cfg.apiKey}` },
+    timeout: 55000, // LLM 偶发慢响应；函数预算 60s
   }, body);
   if (status !== 200 || !json.choices || !json.choices.length) {
     throw new Error("解读服务异常(" + status + ")");
@@ -50,7 +51,7 @@ function httpJson(url, options = {}, body = null) {
   return new Promise((resolve, reject) => {
     const req = https.request(
       url,
-      { method: options.method || "GET", headers: options.headers || {}, timeout: 12000 },
+      { method: options.method || "GET", headers: options.headers || {}, timeout: options.timeout || 12000 },
       (res) => {
         let buf = "";
         res.on("data", (c) => (buf += c));
@@ -125,6 +126,66 @@ function loadSecret() {
   return null;
 }
 
+/* ---------- Turso（订阅周报用；密钥在 turso.json，随函数部署不入库） ---------- */
+function loadTursoConfig() {
+  if (process.env.TURSO_URL && process.env.TURSO_TOKEN) {
+    return { host: process.env.TURSO_URL, token: process.env.TURSO_TOKEN };
+  }
+  try {
+    const c = require("./turso.json");
+    if (c.host && c.token) return c;
+  } catch (e) {
+    /* turso.json 不存在 */
+  }
+  return null;
+}
+
+function tursoPipeline(cfg, stmts) {
+  return new Promise((resolve, reject) => {
+    const body = JSON.stringify({
+      requests: [
+        ...stmts.map((sql) => ({ type: "execute", stmt: { sql } })),
+        { type: "close" },
+      ],
+    });
+    const req = https.request(
+      `https://${cfg.host}/v2/pipeline`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${cfg.token}` },
+        timeout: 12000,
+      },
+      (res) => {
+        let buf = "";
+        res.on("data", (c) => (buf += c));
+        res.on("end", () => {
+          try {
+            const data = JSON.parse(buf);
+            const rows = data.results
+              .filter((r) => r.type === "ok" && r.response && r.response.type === "execute")
+              .map((r) => {
+                const result = r.response.result;
+                const cols = result.cols.map((c) => c.name);
+                return result.rows.map((row) => {
+                  const o = {};
+                  cols.forEach((c, i) => (o[c] = row[i] ? row[i].value : null));
+                  return o;
+                });
+              });
+            resolve(rows);
+          } catch (e) {
+            reject(new Error("Turso 响应异常"));
+          }
+        });
+      }
+    );
+    req.on("error", reject);
+    req.on("timeout", () => req.destroy(new Error("Turso 超时")));
+    req.write(body);
+    req.end();
+  });
+}
+
 exports.main = async (event) => {
   const secret = loadSecret();
   if (!secret) {
@@ -162,6 +223,63 @@ exports.main = async (event) => {
         event.lang === "en" ? await explainEn(word) : await explainZh(word);
       if (data && data.error) return { code: "NO_KEY", message: data.error };
       return { code: "OK", data };
+    }
+
+    /* 订阅周报：用户授权后记录 openid（一次性订阅 = 1 条推送额度） */
+    if (event.action === "subscribeReport") {
+      const tcfg = loadTursoConfig();
+      if (!tcfg) return { code: "NO_TURSO", message: "缺 Turso 配置" };
+      const wxCtx = cloud.getWXContext();
+      const openid = wxCtx.OPENID;
+      if (!openid) return { code: "NO_OPENID", message: "无法获取用户身份" };
+      await tursoPipeline(tcfg, [
+        "CREATE TABLE IF NOT EXISTS sub_quota (openid TEXT PRIMARY KEY, granted_at TEXT)",
+        `INSERT OR REPLACE INTO sub_quota VALUES ('${openid.replace(/'/g, "")}', '${new Date().toISOString()}')`,
+      ]);
+      return { code: "OK", data: { openid } };
+    }
+
+    /* 周报推送：定时触发器/手动调用；需要订阅模板 ID（event.templateId 或环境变量 WX_TMPL_ID） */
+    if (event.action === "weekPush") {
+      const tcfg = loadTursoConfig();
+      if (!tcfg) return { code: "NO_TURSO", message: "缺 Turso 配置" };
+      const templateId = String(event.templateId || process.env.WX_TMPL_ID || "");
+      if (!templateId) return { code: "NO_TEMPLATE", message: "缺订阅模板 ID" };
+
+      const rows = await tursoPipeline(tcfg, [
+        "SELECT openid, granted_at FROM sub_quota",
+        "SELECT COUNT(*) AS n, SUM(total) AS total, SUM(correct) AS correct FROM sessions WHERE created_at >= datetime('now', '-7 days')",
+      ]);
+      const openids = (rows[0] || []).map((r) => r.openid);
+      const stat = (rows[1] || [])[0] || {};
+      const total = Number(stat.total) || 0;
+      const correct = Number(stat.correct) || 0;
+      const times = Number(stat.n) || 0;
+      const acc = total ? Math.round((correct / total) * 100) : 0;
+      if (!openids.length) return { code: "OK", data: { sent: 0, reason: "无订阅额度" } };
+
+      const sendResults = [];
+      for (const openid of openids) {
+        try {
+          await cloud.openapi.subscribeMessage.send({
+            touser: openid,
+            templateId,
+            page: "pages/index/index",
+            data: {
+              thing1: { value: `本周完成 ${times} 次报默` },
+              thing2: { value: total ? `默写正确率 ${acc}%` : "本周暂无默写记录" },
+            },
+          });
+          sendResults.push({ openid, ok: true });
+        } catch (e) {
+          sendResults.push({ openid, ok: false, err: String(e.errMsg || e.message).slice(0, 80) });
+          // 43101 = 用户未订阅/额度用尽 → 清掉额度，等下次授权
+          if (String(e.errCode) === "43101") {
+            await tursoPipeline(tcfg, [`DELETE FROM sub_quota WHERE openid = '${openid.replace(/'/g, "")}'`]);
+          }
+        }
+      }
+      return { code: "OK", data: { stat: { times, total, correct, acc }, sendResults } };
     }
 
     return { code: "BAD_ACTION", message: String(event.action) };
