@@ -1,0 +1,184 @@
+/* 英语错题统计页 · 薄荷绿模块 */
+page {
+  background: #fdfcf7;
+}
+.wrap {
+  padding: 24rpx 28rpx 60rpx;
+}
+
+/* 汇总三卡 */
+.stat-row {
+  display: flex;
+  gap: 16rpx;
+}
+.stat-card {
+  flex: 1;
+  background: #ffffff;
+  border: 2rpx solid #2b3a55;
+  border-radius: 20rpx;
+  padding: 24rpx 0 20rpx;
+  text-align: center;
+  box-shadow: 4rpx 4rpx 0 rgba(43, 58, 85, 0.12);
+}
+.stat-num {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #2b3a55;
+  line-height: 1.2;
+}
+.stat-unit {
+  font-size: 26rpx;
+  font-weight: 600;
+}
+.stat-label {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: #8a8a80;
+}
+
+/* 卡片 */
+.card {
+  background: #ffffff;
+  border: 2rpx solid #2b3a55;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  margin-top: 24rpx;
+  box-shadow: 4rpx 4rpx 0 rgba(43, 58, 85, 0.12);
+}
+.card-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #2b3a55;
+  margin-bottom: 24rpx;
+}
+
+/* 柱状 */
+.bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 12rpx;
+  height: 220rpx;
+}
+.bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+.bar-track {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.bar-fill {
+  width: 36rpx;
+  min-height: 6rpx;
+  background: #a8d5ba;
+  border-radius: 8rpx 8rpx 4rpx 4rpx;
+}
+.bar-fill.is-max {
+  background: #4e9b5a;
+}
+.bar-count {
+  font-size: 20rpx;
+  color: #2b3a55;
+  font-weight: 600;
+  margin-top: 8rpx;
+}
+.bar-label {
+  font-size: 20rpx;
+  color: #8a8a80;
+  margin-top: 4rpx;
+}
+
+/* 排行榜 */
+.rank-row {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 0;
+  border-bottom: 2rpx dashed #e8e5da;
+}
+.rank-row:last-child {
+  border-bottom: none;
+}
+.rank-no {
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 50%;
+  background: #f4f2e9;
+  color: #8a8a80;
+  font-size: 22rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 18rpx;
+  flex-shrink: 0;
+}
+.rank-no.is-hot {
+  background: #ffd43b;
+  color: #2b3a55;
+}
+.rank-main {
+  flex: 1;
+  min-width: 0;
+}
+.rank-en {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #2b3a55;
+}
+.rank-zh {
+  font-size: 22rpx;
+  color: #8a8a80;
+  margin-top: 2rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rank-streak {
+  display: flex;
+  gap: 8rpx;
+  margin: 0 16rpx;
+}
+.dot {
+  width: 14rpx;
+  height: 14rpx;
+  border-radius: 50%;
+  background: #e8e5da;
+}
+.dot.on {
+  background: #4e9b5a;
+}
+.rank-count {
+  font-size: 22rpx;
+  color: #d9534f;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* 空态 */
+.empty-tip {
+  font-size: 24rpx;
+  color: #8a8a80;
+  text-align: center;
+  padding: 30rpx 0;
+}
+
+/* 底部按钮 */
+.go-review {
+  margin-top: 32rpx;
+  background: #ffd43b;
+  color: #2b3a55;
+  font-size: 30rpx;
+  font-weight: 700;
+  border-radius: 44rpx;
+  border: 2rpx solid #2b3a55;
+  box-shadow: 4rpx 4rpx 0 rgba(43, 58, 85, 0.2);
+}
+.go-review::after {
+  border: none;
+}
