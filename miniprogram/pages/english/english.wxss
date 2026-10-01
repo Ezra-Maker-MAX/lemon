@@ -98,3 +98,13 @@
   justify-content: center;
 }
 .en-wrong-badge.is-empty { background: #E5E7EB; color: #9CA3AF; }
+
+/* 错词统计入口 */
+.en-stats-link {
+  margin-top: 16rpx;
+  text-align: center;
+  font-size: 26rpx;
+  color: #4e9b5a;
+  font-weight: 600;
+  padding: 8rpx 0;
+}
