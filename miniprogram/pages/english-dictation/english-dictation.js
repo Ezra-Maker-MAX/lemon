@@ -18,6 +18,7 @@ Page({
     currentIndex: 0,
     current: null, // {en, zh}
     revealed: false,
+    revealCells: [], // 揭示拼写：逐字母格子 [{ch}]
     speaking: false,
 
     result: null,
@@ -64,7 +65,13 @@ Page({
   speakCurrent() {
     const w = this.data.words[this.data.index];
     if (!w || this.data.phase !== "running") return;
-    this.setData({ current: w, revealed: false, speaking: true });
+    this.revealCounted = false; // 新词重置：本词是否已因"看答案"记过错
+    this.setData({
+      current: w,
+      revealed: false,
+      revealCells: [],
+      speaking: true,
+    });
     tts.speak(w.en, {
       voiceType: EN_VOICE,
       rate: -0.2,
@@ -80,8 +87,18 @@ Page({
     if (this.data.phase === "running") this.speakCurrent();
   },
 
+  /* 看答案 = 不会这个词：直接记入错词本（本词不再重复计数） */
   onReveal() {
-    this.setData({ revealed: true });
+    if (this.data.revealed) return;
+    const w = this.data.words[this.data.index];
+    if (!w) return;
+    this.revealCounted = true;
+    this.recordWrong(w, false);
+    this.setData({
+      revealed: true,
+      revealCells: w.en.split("").map((ch) => ({ ch })),
+    });
+    wx.showToast({ title: "已记入错词本，照着四线格写", icon: "none" });
   },
 
   mark(e) {
@@ -89,7 +106,7 @@ Page({
     const ok = e.currentTarget.dataset.ok === "1";
     const i = this.data.index;
     const w = this.data.words[i];
-    this.recordWrong(w, ok);
+    if (!this.revealCounted) this.recordWrong(w, ok); // 看过答案的词已在 onReveal 记过
 
     const words = this.data.words.slice();
     words[i] = { ...w, status: ok ? "ok" : "wrong" };
