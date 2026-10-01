@@ -32,9 +32,11 @@ Page({
     resumeText: "",
     result: null, // {total, correct, wrongList}
 
-    hwJudge: null, // 手写判分结果 {judge: ok|wrong, ocr, dist}
+    hwJudge: null, // 手写判分结果 {judge: ok|wrong, ocr, dist, detail, hint}
     hwLoading: false,
     explain: null, // 词解读 {loading, meaning, sentence, near, error}
+    revealed: false, // 看写法：田字格揭示本词
+    revealCells: [], // [{ch}]
   },
 
   onLoad(options) {
@@ -151,8 +153,11 @@ Page({
   speakCurrent() {
     const w = this.data.words[this.data.index];
     if (!w || this.data.phase !== "running" || this.data.paused) return;
+    this.revealCounted = false; // 新词重置：本词是否已因"看写法"记过错
     this.setData({
       current: { word: w.word, pinyin: w.pinyin },
+      revealed: false,
+      revealCells: [],
       speaking: true,
     });
     tts.speak(this.utterText(w), {
@@ -199,11 +204,10 @@ Page({
     const i = this.data.index;
     const w = this.data.words[i];
     if (!w) return;
+    if (!this.revealCounted) store.updateWrongBook(w.word, w.pinyin, ok); // 看过写法的词已在 onRevealZh 记过
 
     const words = this.data.words.slice();
     words[i] = { ...w, status: ok ? "ok" : "wrong" };
-    store.updateWrongBook(w.word, w.pinyin, ok);
-
     const next = i + 1;
     this.setData({ words, hwJudge: null, explain: null });
     const hw = this.selectComponent("#hw");
@@ -217,6 +221,20 @@ Page({
     this.saveProgress();
     this.speakCurrent(); // 换词即读
     this.startTimer(); // 重置重读计时
+  },
+
+  /* ---------- 看写法（M2.3）：不会 = 直接记错题本，田字格大字揭示供照抄 ---------- */
+  onRevealZh() {
+    if (this.data.revealed || this.data.phase !== "running" || this.data.paused) return;
+    const w = this.data.words[this.data.index];
+    if (!w) return;
+    this.revealCounted = true;
+    store.updateWrongBook(w.word, w.pinyin, false);
+    this.setData({
+      revealed: true,
+      revealCells: w.word.split("").map((ch) => ({ ch })),
+    });
+    wx.showToast({ title: "已记入错题本，照着格子写", icon: "none" });
   },
 
   /* ---------- 手写判分（M2.2） ---------- */
