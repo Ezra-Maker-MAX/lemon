@@ -1,6 +1,7 @@
-/* D11 自检：手写默写判分 + 词解读
+/* D11 自检：手写默写判分 + 词解读（M2.3 扩展：看写法记错题本 + 判错逐字定位）
    1. 语文报默：手写判分（mock OCR）→ 改判 → 下一个词流转；中文解读链路（NO_KEY 提示）
-   2. 英语报默：四线三格手写判分（mock OCR 滑窗）；词典释义真实调用（dictionaryapi.dev）
+   1.5 看写法：自动记错题本 + 田字格揭示；判错定位 detail/hint
+   2. 英语报默：四线三格手写判分（mock OCR 滑窗）；显示拼写记错词本；词典释义两层
    3. 手写板组件渲染（田字格 + 四线三格两种背景） */
 const automator = require("miniprogram-automator");
 
@@ -95,6 +96,43 @@ const ok = (name) => { passed++; console.log(`  PASS ${name}`); };
     ok("中文解读已返回（已配置 DeepSeek）");
   }
 
+  /* ===== 1.5 看写法 + 判错定位（M2.3） ===== */
+  console.log("\n[1.5] 看写法记错题本 + 判错逐字定位");
+  d = await page.data();
+  const w1 = d.current.word;
+  await page.callMethod("onRevealZh");
+  await sleep(500);
+  d = await page.data();
+  if (!d.revealed || d.revealCells.map((c) => c.ch).join("") !== w1) {
+    throw new Error("田字格揭示异常: " + JSON.stringify(d.revealCells));
+  }
+  ok(`看写法田字格揭示「${w1}」✓`);
+
+  const wb = await mp.callWxMethod("getStorageSync", "wrong_book");
+  if (!Array.isArray(wb) || !wb.some((x) => x.word === w1)) {
+    throw new Error("看写法未记入错题本");
+  }
+  ok("看写法自动记入错题本 ✓");
+
+  // 判错定位：mock 一个与目标完全不同的 OCR 结果（保证超容错阈值）
+  const forbidden = new Set(w1.split(""));
+  const pool = "口日月山水火木".split("").filter((c) => !forbidden.has(c));
+  const mockBad = pool.slice(0, 3).join("");
+  await page.callMethod("onMockHw", [mockBad]);
+  d = await page.data();
+  if (!d.hwJudge || d.hwJudge.judge !== "wrong" || !d.hwJudge.detail || !d.hwJudge.hint) {
+    throw new Error("判错定位缺失: " + JSON.stringify(d.hwJudge));
+  }
+  ok(`判错逐字定位 ✓（${d.hwJudge.hint}）`);
+  try { await mp.screenshot({ path: "tools/shots/d11-zh-detail.png" }); } catch (e) {}
+
+  // 流转：revealCounted 状态下 mark 不重复记错题本
+  await page.callMethod("onHwNext");
+  await sleep(800);
+  d = await page.data();
+  if (d.index !== 2) throw new Error("看写法后流转异常: index=" + d.index);
+  ok("看写法 → 判分 → 流转 ✓");
+
   /* ===== 2. 英语报默：手写判分 + 词典释义 ===== */
   console.log("\n[2] 英语手写判分 + 词典释义");
   await mp.reLaunch("/pages/english-dictation/english-dictation?grade=3&term=1&unit=1");
@@ -125,6 +163,33 @@ const ok = (name) => { passed++; console.log(`  PASS ${name}`); };
   d = await page.data();
   if (d.index !== 1 || d.words[0].status !== "ok") throw new Error("英语下一个词流转异常");
   ok("英语判分入库 + 流转 ✓");
+
+  // 显示拼写 → 自动记错词本（M2.3）
+  d = await page.data();
+  const en1 = d.current.en;
+  await page.callMethod("onReveal");
+  await sleep(500);
+  d = await page.data();
+  if (!d.revealed || d.revealCells.map((c) => c.ch).join("") !== en1) {
+    throw new Error("四线三格揭示异常: " + JSON.stringify(d.revealCells));
+  }
+  ok(`显示拼写四线三格揭示「${en1}」✓`);
+  const wbe = await mp.callWxMethod("getStorageSync", "wrong_book_en");
+  if (!Array.isArray(wbe) || !wbe.some((x) => x.en === en1)) {
+    throw new Error("显示拼写未记入错词本");
+  }
+  ok("显示拼写自动记入错词本 ✓");
+
+  // 英语判错定位（3 错超阈值 2）
+  const forbEn = new Set(en1.split(""));
+  const poolEn = "zqxjvk".split("").filter((c) => !forbEn.has(c));
+  await page.callMethod("onMockHw", [poolEn.slice(0, 3).join("")]);
+  d = await page.data();
+  if (!d.hwJudge || d.hwJudge.judge !== "wrong" || !d.hwJudge.detail || !d.hwJudge.hint) {
+    throw new Error("英语判错定位缺失: " + JSON.stringify(d.hwJudge));
+  }
+  ok(`英语判错逐字母定位 ✓（${d.hwJudge.hint}）`);
+  try { await mp.screenshot({ path: "tools/shots/d11-en-detail.png" }); } catch (e) {}
 
   // 释义两层：① 词库本地释义立即显示 ② LLM 联网增强（未配密钥 → 保留本地 + 引导提示）
   await page.callMethod("onExplain");
