@@ -83,17 +83,21 @@ const ok = (name) => { passed++; console.log(`  PASS ${name}`); };
   ok("下一个词流转 + 判分态清空 ✓（错词入错题本）");
   try { await mp.screenshot({ path: "tools/shots/d11-zh-hw.png" }); } catch (e) {}
 
-  // 中文解读（未配 DeepSeek → 应返回可读提示而非崩溃）
+  // 中文解读（已配 Agnes → 真实 LLM 调用 3-60s；未配 → 引导提示；轮询等完）
   await page.callMethod("onExplain");
-  await sleep(3500);
   d = await page.data();
+  const zhDeadline = Date.now() + 90000;
+  while (d.explain && d.explain.loading && Date.now() < zhDeadline) {
+    await sleep(5000);
+    d = await page.data();
+  }
   if (!d.explain) throw new Error("中文解读无响应");
   if (d.explain.error) {
-    if (!/DeepSeek|密钥/.test(d.explain.error)) throw new Error("解读提示异常: " + d.explain.error);
+    if (!/Agnes|DeepSeek|密钥/.test(d.explain.error)) throw new Error("解读提示异常: " + d.explain.error);
     ok("中文解读链路通（未配密钥 → 返回引导提示）");
   } else {
     if (!d.explain.meaning) throw new Error("解读内容为空");
-    ok("中文解读已返回（已配置 DeepSeek）");
+    ok("中文解读已返回（Agnes LLM）: " + String(d.explain.meaning).slice(0, 30) + "…");
   }
 
   /* ===== 1.5 看写法 + 判错定位（M2.3） ===== */
@@ -202,11 +206,15 @@ const ok = (name) => { passed++; console.log(`  PASS ${name}`); };
   ok(`课本释义立即显示 ✓（${d.explain.meanings[0]}）`);
 
   await page.callMethod("onExplain"); // 第二次点 → LLM 增强
-  await sleep(6000);
   d = await page.data();
-  if (d.explain && d.explain.level === 2 && d.explain.meanings.length) {
+  const enDeadline = Date.now() + 90000;
+  while (d.explain && d.explain.loading && Date.now() < enDeadline) {
+    await sleep(5000);
+    d = await page.data();
+  }
+  if (d.explain && d.explain.level === 2 && d.explain.meanings.length && !d.explain.loading) {
     ok("LLM 联网详解已返回 ✓");
-  } else if (d.explain && d.explain.error && /DeepSeek|密钥/.test(d.explain.error)) {
+  } else if (d.explain && d.explain.error && /Agnes|DeepSeek|密钥/.test(d.explain.error)) {
     ok("LLM 增强链路通（未配密钥 → 本地释义保留 + 引导提示）");
   } else {
     throw new Error("释义两层逻辑异常: " + JSON.stringify(d.explain));
