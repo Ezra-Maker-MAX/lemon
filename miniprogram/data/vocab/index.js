@@ -3,10 +3,14 @@
    注意：小程序 require 不支持 JSON，词库必须存成 .js 模块（module.exports） */
 const term1 = require("./grade3/term1.js");
 const term2 = require("./grade3/term2.js");
+const g4t1 = require("./grade4/term1.js");
+const g4t2 = require("./grade4/term2.js");
 
 const DB = {
   "3-1": term1,
   "3-2": term2,
+  "4-1": g4t1,
+  "4-2": g4t2,
 };
 
 /**
