@@ -3,6 +3,7 @@ const BOOKS = {
   "3-1": { grade: 3, term: 1, label: "三上", db: require("./grade3-term1") },
   "3-2": { grade: 3, term: 2, label: "三下", db: require("./grade3-term2") },
   "4-1": { grade: 4, term: 1, label: "四上", db: require("./grade4-term1") },
+  "4-2": { grade: 4, term: 2, label: "四下", db: require("./grade4-term2") },
 };
 
 function listBooks() {
