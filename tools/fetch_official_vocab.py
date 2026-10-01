@@ -11,6 +11,7 @@ import urllib.request
 BASE = "https://pinyin.bjwxjs.com"
 BOOK_ID = os.environ.get("BOOK_ID", "2026sanshang63")
 TERM = os.environ.get("TERM", "1")
+GRADE = os.environ.get("GRADE", "3")
 AREAS = [1, 10, 11]
 
 
@@ -81,7 +82,7 @@ def main():
 
     term_name = "上册" if TERM == "1" else "下册"
     data = {
-        "grade": 3,
+        "grade": int(GRADE),
         "term": int(TERM),
         "bookId": BOOK_ID,
         "source": "青柠字词官方接口 pinyin.bjwxjs.com",
@@ -93,11 +94,13 @@ def main():
         json.dumps({"units": units, "words": res["data"]["Words"]}, ensure_ascii=False))
 
     # 5. 生成 term{TERM}.js
-    js = ("/* 词库数据：部编统编版三年级" + term_name + "（官方数据，来自青柠字词接口，"
+    js = ("/* 词库数据：部编统编版" + GRADE + "年级" + term_name + "（官方数据，来自青柠字词接口，"
           + BOOK_ID + "）\n   由 tools/fetch_official_vocab.py 生成，请勿手改；如需更新重跑脚本 */\n"
           + "module.exports = " + json.dumps(data, ensure_ascii=False, indent=2) + ";\n")
-    io.open(f"miniprogram/data/vocab/grade3/term{TERM}.js", "w", encoding="utf-8").write(js)
-    print(f"term{TERM}.js written")
+    out_dir = f"miniprogram/data/vocab/grade{GRADE}"
+    os.makedirs(out_dir, exist_ok=True)
+    io.open(f"{out_dir}/term{TERM}.js", "w", encoding="utf-8").write(js)
+    print(f"grade{GRADE}/term{TERM}.js written")
 
 
 if __name__ == "__main__":
