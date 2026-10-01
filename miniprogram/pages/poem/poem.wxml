@@ -58,6 +58,19 @@
           <text wx:for="{{item.chars}}" wx:for-item="c" wx:key="index" class="pm-char">{{c.ch}}</text>
         </view>
       </view>
+
+      <!-- 配图（Agnes 生成，本地缓存） -->
+      <view class="pm-fig" wx:if="{{poemImg}}">
+        <image class="pm-fig-img" src="{{poemImg}}" mode="aspectFill" bindtap="onSaveImg" />
+        <view class="muted pm-fig-cap">点按画作可保存到相册</view>
+      </view>
+      <view class="pm-fig pm-fig-loading" wx:elif="{{poemImgLoading}}">
+        <view class="pm-fig-placeholder">🎨 正在为这首诗作画…</view>
+      </view>
+      <view class="pm-fig pm-fig-failed" wx:else>
+        <view class="btn-ghost ctrl-btn" bindtap="fetchPoemImage">🎨 为这首诗作画</view>
+      </view>
+
       <view class="ctrl-row">
         <view class="btn-ghost ctrl-btn" bindtap="onBackList">再背一首</view>
       </view>
