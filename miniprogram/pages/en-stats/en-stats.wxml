@@ -1,0 +1,55 @@
+<view class="wrap">
+  <!-- 汇总三卡 -->
+  <view class="stat-row">
+    <view class="stat-card">
+      <view class="stat-num">{{pending}}</view>
+      <view class="stat-label">待复习词</view>
+    </view>
+    <view class="stat-card">
+      <view class="stat-num">{{totalWrong}}</view>
+      <view class="stat-label">累计拼错</view>
+    </view>
+    <view class="stat-card">
+      <view class="stat-num">{{recentRate}}<text class="stat-unit">%</text></view>
+      <view class="stat-label">近7次正确率</view>
+    </view>
+  </view>
+
+  <!-- 最近 7 天拼错分布 -->
+  <view class="card">
+    <view class="card-title">最近 7 天拼错分布</view>
+    <view class="bars" wx:if="{{!empty}}">
+      <view class="bar-col" wx:for="{{days}}" wx:key="label">
+        <view class="bar-track">
+          <view class="bar-fill {{item.isMax ? 'is-max' : ''}}" style="height: {{item.pct}}%"></view>
+        </view>
+        <view class="bar-count">{{item.count}}</view>
+        <view class="bar-label">{{item.label}}</view>
+      </view>
+    </view>
+    <view class="empty-tip" wx:else>还没有英语报默记录，先去练一轮吧</view>
+  </view>
+
+  <!-- Top10 错词榜 -->
+  <view class="card">
+    <view class="card-title">最常拼错的词 TOP10</view>
+    <view wx:if="{{top.length}}">
+      <view class="rank-row" wx:for="{{top}}" wx:key="en">
+        <view class="rank-no {{index < 3 ? 'is-hot' : ''}}">{{index + 1}}</view>
+        <view class="rank-main">
+          <view class="rank-en">{{item.en}}</view>
+          <view class="rank-zh">{{item.zh}}</view>
+        </view>
+        <view class="rank-streak">
+          <view class="dot {{item.okStreak >= 1 ? 'on' : ''}}"></view>
+          <view class="dot {{item.okStreak >= 2 ? 'on' : ''}}"></view>
+          <view class="dot {{item.okStreak >= 3 ? 'on' : ''}}"></view>
+        </view>
+        <view class="rank-count">错 {{item.wrongCount}} 次</view>
+      </view>
+    </view>
+    <view class="empty-tip" wx:else>错词池是空的，真棒！继续保持 🍋</view>
+  </view>
+
+  <button class="go-review" bindtap="goReview">去复习错词</button>
+</view>
