@@ -69,3 +69,33 @@
 .ctrl-row { display: flex; gap: 24rpx; margin-top: 20rpx; width: 100%; }
 .ctrl-btn { flex: 1; text-align: center; }
 .done-title { font-size: 36rpx; font-weight: 600; margin-bottom: 12rpx; }
+
+/* 配图区 */
+.pm-fig {
+  margin-top: 20rpx;
+}
+.pm-fig-img {
+  width: 100%;
+  height: 420rpx;
+  border-radius: 16rpx;
+  border: 2rpx solid rgba(43, 58, 85, 0.12);
+}
+.pm-fig-cap {
+  font-size: 22rpx;
+  text-align: center;
+  margin-top: 10rpx;
+}
+.pm-fig-loading,
+.pm-fig-failed {
+  height: 200rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16rpx;
+  border: 2rpx dashed rgba(43, 58, 85, 0.25);
+  background: rgba(255, 212, 59, 0.08);
+}
+.pm-fig-placeholder {
+  font-size: 26rpx;
+  color: #2b3a55;
+}
