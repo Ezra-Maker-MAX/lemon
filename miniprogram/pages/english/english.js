@@ -4,7 +4,7 @@
 const enVocab = require("../../data/vocab/english/index");
 const tts = require("../../utils/tts");
 
-const EN_VOICE = 403006; // YunMia 美音女声
+const EN_VOICE = 101016; // 智甜·女童声（基础音色；大模型音色资源包已耗尽，见 2026-10-01 日志）
 
 Page({
   data: {
@@ -64,7 +64,12 @@ Page({
   /* 单词试听 */
   onSpeak(e) {
     const en = e.currentTarget.dataset.en;
-    tts.speak(en, { voiceType: EN_VOICE, rate: -0.2, onError: () => {} });
+    tts.speak(en, {
+      voiceType: EN_VOICE,
+      rate: -0.2,
+      onError: () =>
+        wx.showToast({ title: "发音失败，请检查网络", icon: "none" }),
+    });
   },
 
   goDictation() {
