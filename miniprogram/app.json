@@ -13,7 +13,8 @@
     "pages/sheet/sheet",
     "pages/custom-list/custom-list",
     "pages/english/english",
-    "pages/english-dictation/english-dictation"
+    "pages/english-dictation/english-dictation",
+    "pages/en-stats/en-stats"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FFD43B",
