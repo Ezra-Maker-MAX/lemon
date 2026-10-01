@@ -2,12 +2,21 @@
   <!-- hero：薄荷绿签名 -->
   <view class="en-hero">
     <view class="en-hero-title">柠檬单词 🍋</view>
-    <view class="en-hero-sub">PEP 三年级上册 · 四线三格</view>
+    <view class="en-hero-sub">PEP 人教版 · 四线三格 · {{bookLabel}}</view>
   </view>
 
   <view class="page-body">
-    <!-- 单元切换 -->
+    <!-- 册切换 -->
     <view class="card">
+      <view class="tag tag-mint">选册</view>
+      <view class="chip-row">
+        <view
+          wx:for="{{books}}" wx:key="key"
+          class="chip {{bookKey === item.key ? 'chip-on' : ''}}"
+          bindtap="onPickBook" data-key="{{item.key}}"
+        >{{item.grade}}年级{{item.label}}</view>
+      </view>
+
       <view class="tag tag-mint">选单元</view>
       <view class="chip-row">
         <view
@@ -31,6 +40,15 @@
       </view>
 
       <view class="btn-primary en-start" bindtap="goDictation">听音拼写 · 开始报默</view>
+    </view>
+
+    <!-- 错词复习 -->
+    <view class="card en-wrong-card" bindtap="goWrongReview">
+      <view class="en-wrong-left">
+        <view class="en-wrong-title">🎯 错词复习</view>
+        <view class="muted en-wrong-sub">拼错过的词，连对 3 次自动出池</view>
+      </view>
+      <view class="en-wrong-badge {{wrongCount ? '' : 'is-empty'}}">{{wrongCount}}</view>
     </view>
   </view>
 </view>
