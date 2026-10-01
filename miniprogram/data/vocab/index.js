@@ -2,9 +2,11 @@
    词库放主包 data/（三上全量约 27KB，主包 2MB 限额内；M2 英语词库进来后再评估）。
    注意：小程序 require 不支持 JSON，词库必须存成 .js 模块（module.exports） */
 const term1 = require("./grade3/term1.js");
+const term2 = require("./grade3/term2.js");
 
 const DB = {
   "3-1": term1,
+  "3-2": term2,
 };
 
 /**
