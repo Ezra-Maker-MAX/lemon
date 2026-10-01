@@ -1,14 +1,49 @@
 /* 云函数 ai：柠檬字词的腾讯云能力聚合入口
    action = "tts" → 腾讯云基础语音合成 TextToVoice，返回 base64 mp3
    action = "ocr" → 通用手写体识别 GeneralHandwritingOCR，返回识别行数组
-   action = "explain" → 词解读：en=免费词典 API；zh=DeepSeek（需环境变量 DEEPSEEK_API_KEY）
-   密钥：优先环境变量 TENCENT_SECRET_ID/KEY，否则读同目录 secret.json（gitignore） */
+   action = "explain" → 词解读：经 Agnes AI（OpenAI 兼容 /chat/completions）
+   LLM 配置：优先环境变量 AGNES_API_KEY，否则读同目录 llm.json（gitignore）
+   腾讯云密钥：优先环境变量 TENCENT_SECRET_ID/KEY，否则读同目录 secret.json（gitignore） */
 const cloud = require("wx-server-sdk");
 const https = require("https");
 const TtsClient = require("tencentcloud-sdk-nodejs-tts").tts.v20190823.Client;
 const OcrClient = require("tencentcloud-sdk-nodejs-ocr").ocr.v20181119.Client;
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
+
+/* Agnes LLM 配置：环境变量优先，其次 config.json（随函数部署但不入库） */
+function loadLLMConfig() {
+  if (process.env.AGNES_API_KEY) {
+    return { baseUrl: "https://apihub.agnes-ai.com/v1", apiKey: process.env.AGNES_API_KEY, model: "agnes-2.5-flash" };
+  }
+  try {
+    const c = require("./llm.json");
+    if (c.apiKey) {
+      return { baseUrl: c.baseUrl || "https://apihub.agnes-ai.com/v1", apiKey: c.apiKey, model: c.model || "agnes-2.5-flash" };
+    }
+  } catch (e) {
+    /* llm.json 不存在 */
+  }
+  return null;
+}
+
+/* OpenAI 兼容 chat/completions（2.5-flash 带 reasoning_content 且 content 有前导空行，须 trim） */
+async function callLLM(cfg, prompt, maxTokens) {
+  const body = JSON.stringify({
+    model: cfg.model,
+    messages: [{ role: "user", content: prompt }],
+    temperature: 0.3,
+    max_tokens: maxTokens,
+  });
+  const { status, json } = await httpJson(cfg.baseUrl + "/chat/completions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${cfg.apiKey}` },
+  }, body);
+  if (status !== 200 || !json.choices || !json.choices.length) {
+    throw new Error("解读服务异常(" + status + ")");
+  }
+  return String(json.choices[0].message.content || "").trim();
+}
 
 /* HTTPS GET/POST JSON（云函数出网不受小程序域名校验限制） */
 function httpJson(url, options = {}, body = null) {
@@ -35,80 +70,43 @@ function httpJson(url, options = {}, body = null) {
   });
 }
 
-/* 英文释义：LLM（dictionaryapi.dev 为境外源，国内网络不可达，弃用） */
+/* 英文释义：Agnes LLM（dictionaryapi.dev 为境外源，国内网络不可达，弃用） */
 async function explainEn(word) {
-  const key = process.env.DEEPSEEK_API_KEY;
-  if (!key) {
-    return { error: "联网释义需要配置 DeepSeek 密钥（云函数环境变量 DEEPSEEK_API_KEY）" };
+  const cfg = loadLLMConfig();
+  if (!cfg) {
+    return { error: "联网释义需要配置 Agnes 密钥（环境变量 AGNES_API_KEY 或云函数目录 llm.json）" };
   }
   const prompt =
     `你是小学三年级英语老师。解释单词「${word}」，适合中国小学生，` +
-    `严格返回 JSON：{"phonetic":"音标，如 /həˈləʊ/","meanings":["中文意思1","中文意思2"],"example":"一个简单英文例句"}`;
-  const body = JSON.stringify({
-    model: "deepseek-chat",
-    messages: [{ role: "user", content: prompt }],
-    temperature: 0.3,
-    max_tokens: 200,
-    response_format: { type: "json_object" },
-  });
-  const { status, json } = await httpJson(
-    "https://api.deepseek.com/chat/completions",
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
-    },
-    body
-  );
-  if (status !== 200 || !json.choices || !json.choices.length) {
-    throw new Error("解读服务异常");
-  }
+    `严格返回 JSON（不要多余文字）：{"phonetic":"音标，如 /həˈləʊ/","meanings":["中文意思1","中文意思2"],"example":"一个简单英文例句"}`;
+  const raw = await callLLM(cfg, prompt, 300);
   try {
-    const parsed = JSON.parse(json.choices[0].message.content);
+    const parsed = JSON.parse(raw.replace(/^```json\s*|```$/g, "").trim());
     return {
       phonetic: parsed.phonetic || "",
       meanings: Array.isArray(parsed.meanings) && parsed.meanings.length ? parsed.meanings : ["暂无释义"],
       example: parsed.example || "",
     };
   } catch (e) {
-    return { phonetic: "", meanings: [String(json.choices[0].message.content).slice(0, 120)], example: "" };
+    return { phonetic: "", meanings: [String(raw).slice(0, 120)], example: "" };
   }
 }
 
-/* 中文解读：DeepSeek（OpenAI 兼容接口；密钥放云函数环境变量 DEEPSEEK_API_KEY） */
+/* 中文解读：Agnes LLM（OpenAI 兼容接口） */
 async function explainZh(word) {
-  const key = process.env.DEEPSEEK_API_KEY;
-  if (!key) {
-    return { error: "中文解读需要配置 DeepSeek 密钥（云函数环境变量 DEEPSEEK_API_KEY）" };
+  const cfg = loadLLMConfig();
+  if (!cfg) {
+    return { error: "中文解读需要配置 Agnes 密钥（环境变量 AGNES_API_KEY 或云函数目录 llm.json）" };
   }
   const prompt =
     `你是小学三年级语文老师。用适合孩子的方式解释词语「${word}」，120字以内，` +
-    `严格返回 JSON：{"meaning":"这个词语是什么意思","sentence":"用这个词造一个句子","near":"近义词：…；反义词：…"}`;
-  const body = JSON.stringify({
-    model: "deepseek-chat",
-    messages: [{ role: "user", content: prompt }],
-    temperature: 0.3,
-    max_tokens: 300,
-    response_format: { type: "json_object" },
-  });
-  const { status, json } = await httpJson(
-    "https://api.deepseek.com/chat/completions",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${key}`,
-      },
-    },
-    body
-  );
-  if (status !== 200 || !json.choices || !json.choices.length) {
-    throw new Error("解读服务异常");
-  }
+    `严格返回 JSON（不要多余文字）：{"meaning":"这个词语是什么意思","sentence":"用这个词造一个句子","near":"近义词：…；反义词：…"}`;
+  const raw = await callLLM(cfg, prompt, 400);
   try {
-    const parsed = JSON.parse(json.choices[0].message.content);
+    const parsed = JSON.parse(raw.replace(/^```json\s*|```$/g, "").trim());
     return { meaning: parsed.meaning || "", sentence: parsed.sentence || "", near: parsed.near || "" };
   } catch (e) {
-    return { meaning: String(json.choices[0].message.content).slice(0, 150), sentence: "", near: "" };
+    return { meaning: String(raw).slice(0, 150), sentence: "", near: "" };
   }
 }
 
