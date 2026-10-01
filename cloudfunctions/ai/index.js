@@ -9,6 +9,9 @@ const https = require("https");
 const TtsClient = require("tencentcloud-sdk-nodejs-tts").tts.v20190823.Client;
 const OcrClient = require("tencentcloud-sdk-nodejs-ocr").ocr.v20181119.Client;
 
+/* 订阅消息周报模板 ID（与 miniprogram/pages/settings/settings.js 保持一致） */
+const WEEKLY_TMPL_ID = "IsKFdVTBg_S00GzBejizY3BsFdvzGzS8u7an4Uq7VAk";
+
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 
 /* Agnes LLM 配置：环境变量优先，其次 llm.json（随函数部署但不入库） */
@@ -187,6 +190,10 @@ function tursoPipeline(cfg, stmts) {
 }
 
 exports.main = async (event) => {
+  // 云开发定时触发器 event = { Type: "Timer", TriggerName, Time } → 转成周报推送
+  if (event && event.Type === "Timer") {
+    event = { action: "weekPush", templateId: WEEKLY_TMPL_ID };
+  }
   const secret = loadSecret();
   if (!secret) {
     return { code: "NO_SECRET", message: "云函数缺腾讯云密钥（secret.json 或环境变量）" };
@@ -243,7 +250,7 @@ exports.main = async (event) => {
     if (event.action === "weekPush") {
       const tcfg = loadTursoConfig();
       if (!tcfg) return { code: "NO_TURSO", message: "缺 Turso 配置" };
-      const templateId = String(event.templateId || process.env.WX_TMPL_ID || "");
+      const templateId = String(event.templateId || process.env.WX_TMPL_ID || WEEKLY_TMPL_ID || "");
       if (!templateId) return { code: "NO_TEMPLATE", message: "缺订阅模板 ID" };
 
       const rows = await tursoPipeline(tcfg, [
