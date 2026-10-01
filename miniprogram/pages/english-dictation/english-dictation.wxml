@@ -17,6 +17,46 @@
       </view>
     </view>
 
+    <!-- 手写拼写区（M2.2）：四线三格手写 → 提交 OCR 判分 -->
+    <view class="card hw-card">
+      <view class="hw-toolbar">
+        <text class="muted hw-hint">✍️ 在四线格里拼写本词</text>
+        <view class="btn-ghost hw-mini" bindtap="onHwClear">🧹 清空</view>
+      </view>
+      <handwrite id="hw" bg="fourline" />
+      <view class="btn-primary hw-submit {{hwLoading ? 'is-loading' : ''}}" bindtap="onHwSubmit">
+        {{hwLoading ? "判分中…" : "提交判分"}}
+      </view>
+
+      <view class="hw-result" wx:if="{{hwJudge}}">
+        <text class="hw-ocr muted">识别：{{hwJudge.ocr}}</text>
+        <text class="hw-verdict {{hwJudge.judge === 'ok' ? 'v-ok' : 'v-bad'}}">
+          {{hwJudge.judge === 'ok' ? '✓ 拼对了' : '✗ 拼错了'}}
+        </text>
+        <view class="hw-result-actions">
+          <view class="btn-ghost hw-mini" bindtap="onHwToggle">改判</view>
+          <view class="btn-primary hw-mini-primary" bindtap="onHwNext">下一个词 ›</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 词典释义（M2.2） -->
+    <view class="card ex-card">
+      <view class="ex-trigger" bindtap="onExplain">
+        <text>📖 这个词什么意思？</text>
+        <text class="muted ex-arrow">{{explain ? (explain.level === 1 ? "联网详解 ›" : (explain.loading ? "加载中…" : "收起")) : "点开"}}</text>
+      </view>
+      <view class="ex-body" wx:if="{{explain}}">
+        <view class="muted ex-loading" wx:if="{{explain.loading}}">查询词典中…</view>
+        <view class="ex-error" wx:if="{{explain.error}}">{{explain.error}}</view>
+        <block wx:if="{{!explain.loading && !explain.error}}">
+          <view class="ex-phonetic" wx:if="{{explain.phonetic}}">{{explain.phonetic}}</view>
+          <view class="ex-meaning" wx:for="{{explain.meanings}}" wx:key="index">• {{item}}</view>
+          <view class="ex-row" wx:if="{{explain.example}}">✏️ {{explain.example}}</view>
+        </block>
+      </view>
+    </view>
+
     <view class="ctrl-row">
       <view class="btn-ghost ctrl-btn" bindtap="onRepeat">🔁 再听一次</view>
     </view>
