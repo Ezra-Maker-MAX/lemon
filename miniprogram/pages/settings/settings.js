@@ -27,7 +27,7 @@ const VOICES = [
 
 /* 订阅消息周报模板 ID：mp.weixin.qq.com → 订阅消息 → 选用「学习提醒」类模板后填入
    模板字段需含两个 thing 类型（第1个=完成情况，第2个=正确率/提醒语） */
-const WEEKLY_TMPL_ID = "";
+const WEEKLY_TMPL_ID = "IsKFdVTBg_S00GzBejizY3BsFdvzGzS8u7an4Uq7VAk";
 
 Page({
   data: {
