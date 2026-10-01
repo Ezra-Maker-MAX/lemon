@@ -79,11 +79,15 @@
     <view class="tag tag-blue">教材版本</view>
     <view class="setting-row">
       <text>当前教材</text>
-      <text class="muted">人教版 · 三年级上册</text>
+      <text class="muted">{{gradeText || '人教版 · 三年级上册'}}</text>
     </view>
     <view class="setting-row" bindtap="goCustom">
       <text>自定义词表</text>
       <text class="muted">管理 ›</text>
+    </view>
+    <view class="setting-row" bindtap="onWeeklyRemind">
+      <text>每周学习提醒</text>
+      <text class="muted">订阅 ›</text>
     </view>
   </view>
 
