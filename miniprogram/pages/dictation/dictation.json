@@ -1,4 +1,6 @@
 {
   "navigationBarTitleText": "语音报默",
-  "usingComponents": {}
+  "usingComponents": {
+    "handwrite": "/components/handwrite/handwrite"
+  }
 }
