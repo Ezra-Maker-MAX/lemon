@@ -71,3 +71,30 @@
 .en-speak { font-size: 32rpx; }
 
 .en-start { margin-top: 28rpx; text-align: center; }
+
+/* 错词复习卡（M2.1） */
+.en-wrong-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.en-wrong-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--ink);
+}
+.en-wrong-sub { font-size: 22rpx; margin-top: 6rpx; }
+.en-wrong-badge {
+  min-width: 56rpx;
+  height: 56rpx;
+  padding: 0 16rpx;
+  border-radius: 999rpx;
+  background: #A8D5BA;
+  color: #17321F;
+  font-size: 28rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.en-wrong-badge.is-empty { background: #E5E7EB; color: #9CA3AF; }
