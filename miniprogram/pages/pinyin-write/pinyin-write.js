@@ -35,7 +35,9 @@ Page({
       store.fillPinyinForCustom();
       this.customList = store.getCustomList(options.lid);
     }
-    const units = vocab.getUnits(3, 1);
+    const grade = store.getProfile().grade || 3;
+    const units = vocab.getUnits(grade, 1);
+    this.grade = grade;
     this.setData({
       isCustom: this.isCustom,
       customName: (this.customList || {}).name || "",
@@ -70,7 +72,7 @@ Page({
       words = ((this.customList || {}).words || []).slice(0, 15);
     } else {
       const { unit, listType, count } = this.data;
-      words = vocab.buildWordList(3, 1, unit, listType, count, "seq");
+      words = vocab.buildWordList(this.grade || 3, 1, unit, listType, count, "seq");
     }
     if (!words.length) {
       wx.showToast({ title: "该词表为空", icon: "none" });
