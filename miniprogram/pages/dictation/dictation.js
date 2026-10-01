@@ -5,6 +5,7 @@
 const vocab = require("../../data/vocab/index");
 const store = require("../../utils/store");
 const tts = require("../../utils/tts");
+const ocrUtil = require("../../utils/ocr");
 
 const LIST_NAME = { xiezi: "写字表", ciyu: "词语表", shizi: "识字表" };
 
@@ -30,6 +31,10 @@ Page({
     resume: null, // 断点 {words,index,unitTitle,listName,...}
     resumeText: "",
     result: null, // {total, correct, wrongList}
+
+    hwJudge: null, // 手写判分结果 {judge: ok|wrong, ocr, dist}
+    hwLoading: false,
+    explain: null, // 词解读 {loading, meaning, sentence, near, error}
   },
 
   onLoad(options) {
@@ -200,14 +205,106 @@ Page({
     store.updateWrongBook(w.word, w.pinyin, ok);
 
     const next = i + 1;
+    this.setData({ words, hwJudge: null, explain: null });
+    const hw = this.selectComponent("#hw");
+    if (hw) hw.clear();
+
     if (next >= words.length) {
       this.finish(words);
       return;
     }
-    this.setData({ words, index: next, currentIndex: next });
+    this.setData({ index: next, currentIndex: next });
     this.saveProgress();
     this.speakCurrent(); // 换词即读
     this.startTimer(); // 重置重读计时
+  },
+
+  /* ---------- 手写判分（M2.2） ---------- */
+  onHwClear() {
+    const hw = this.selectComponent("#hw");
+    if (hw) hw.clear();
+    this.setData({ hwJudge: null });
+  },
+
+  onHwSubmit() {
+    if (this.data.hwLoading || this.data.paused) return;
+    const w = this.data.words[this.data.index];
+    const hw = this.selectComponent("#hw");
+    if (!w || !hw) return;
+    if (hw.isEmpty()) {
+      wx.showToast({ title: "先在格子里默写，再提交", icon: "none" });
+      return;
+    }
+    this.setData({ hwLoading: true });
+    hw
+      .exportImage()
+      .then((path) => {
+        const fsm = wx.getFileSystemManager();
+        fsm.readFile({
+          filePath: path,
+          encoding: "base64",
+          success: (res) =>
+            ocrUtil.ocrBase64(res.data).then((out) => {
+              this.setData({ hwLoading: false });
+              if (!out.ok) {
+                wx.showToast({ title: "识别失败，可手动标对错", icon: "none" });
+                return;
+              }
+              const r = ocrUtil.judgeWord(w.word, out.lines, "zh");
+              if (r.judge === "skip") {
+                wx.showToast({ title: "没认出来，重写或手动标", icon: "none" });
+                return;
+              }
+              this.setData({ hwJudge: r });
+            }),
+          fail: () => {
+            this.setData({ hwLoading: false });
+            wx.showToast({ title: "读取手写失败", icon: "none" });
+          },
+        });
+      })
+      .catch(() => {
+        this.setData({ hwLoading: false });
+        wx.showToast({ title: "导出手写失败", icon: "none" });
+      });
+  },
+
+  onHwToggle() {
+    const hwJudge = this.data.hwJudge;
+    if (!hwJudge) return;
+    this.setData({ hwJudge: { ...hwJudge, judge: hwJudge.judge === "ok" ? "wrong" : "ok" } });
+  },
+
+  onHwNext() {
+    const hwJudge = this.data.hwJudge;
+    if (!hwJudge) return;
+    this.mark({ currentTarget: { dataset: { ok: hwJudge.judge === "ok" ? "1" : "0" } } });
+  },
+
+  /* ---------- 词解读（M2.2） ---------- */
+  onExplain() {
+    const w = this.data.words[this.data.index];
+    if (!w) return;
+    if (this.data.explain && !this.data.explain.error) return; // 已加载
+    this.setData({ explain: { loading: true } });
+    wx.cloud
+      .callFunction({
+        name: "ai",
+        data: { action: "explain", lang: "zh", word: w.word },
+      })
+      .then((r) => {
+        const out = r && r.result;
+        if (out && out.code === "OK") {
+          this.setData({ explain: { loading: false, ...out.data } });
+        } else {
+          this.setData({
+            explain: { loading: false, error: (out && out.message) || "解读服务暂不可用" },
+          });
+        }
+      })
+      .catch(() =>
+        this.setData({ explain: { loading: false, error: "网络异常，稍后再试" } })
+      );
   },
 
   saveProgress() {
@@ -293,6 +390,14 @@ Page({
     const back = () =>
       wx.navigateBack({ fail: () => wx.reLaunch({ url: "/pages/vocab/vocab" }) });
     back();
+  },
+
+  /* ---------- 自动化调试入口（自检脚本调用，不影响正常流程） ---------- */
+  onMockHw(lines) {
+    const w = this.data.words[this.data.index];
+    if (!w) return;
+    const r = ocrUtil.judgeWord(w.word, lines || [], "zh");
+    if (r.judge !== "skip") this.setData({ hwJudge: r });
   },
 
   onUnload() {
