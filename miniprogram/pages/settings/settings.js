@@ -25,6 +25,10 @@ const VOICES = [
   { id: 101006, name: "智言", tag: "阳光男声", mark: "言" },
 ];
 
+/* 订阅消息周报模板 ID：mp.weixin.qq.com → 订阅消息 → 选用「学习提醒」类模板后填入
+   模板字段需含两个 thing 类型（第1个=完成情况，第2个=正确率/提醒语） */
+const WEEKLY_TMPL_ID = "";
+
 Page({
   data: {
     s: null, // settings 快照
@@ -36,7 +40,9 @@ Page({
   onLoad() {
     store.initDefaults();
     const s = store.getSettings();
-    this.setData({ s, rateText: rateLabel(s.speechRate) });
+    const p = store.getProfile();
+    const gradeText = `人教版 · ${p.grade || 3}年级${(p.term || 1) === 1 ? "上册" : "下册"}`;
+    this.setData({ s, rateText: rateLabel(s.speechRate), gradeText });
   },
 
   /* ---------- 语速（-1 ~ 1，步进 0.2） ---------- */
@@ -89,6 +95,33 @@ Page({
 
   goCustom() {
     wx.navigateTo({ url: "/pages/custom-list/custom-list" });
+  },
+
+  /* ---------- 每周学习提醒（一次性订阅消息；模板 ID 建好后填 WEEKLY_TMPL_ID） ---------- */
+  onWeeklyRemind() {
+    const TMPL_ID = WEEKLY_TMPL_ID;
+    if (!TMPL_ID) {
+      wx.showModal({
+        title: "待配置",
+        content: "需要先在微信后台创建「学习周报」订阅消息模板，把模板 ID 填入 settings.js 的 WEEKLY_TMPL_ID。",
+        showCancel: false,
+      });
+      return;
+    }
+    wx.requestSubscribeMessage({
+      tmplIds: [TMPL_ID],
+      success: (r) => {
+        if (r[TMPL_ID] !== "accept") {
+          wx.showToast({ title: "已取消订阅", icon: "none" });
+          return;
+        }
+        wx.cloud
+          .callFunction({ name: "ai", data: { action: "subscribeReport" } })
+          .then(() => wx.showToast({ title: "已订阅，周日晚 8 点见", icon: "success" }))
+          .catch(() => wx.showToast({ title: "订阅记录失败，稍后再试", icon: "none" }));
+      },
+      fail: () => wx.showToast({ title: "订阅未完成", icon: "none" }),
+    });
   },
 
   /* ---------- 清空全部数据（二次确认） ---------- */  onClearData() {
