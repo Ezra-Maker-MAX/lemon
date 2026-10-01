@@ -1,4 +1,6 @@
 {
-  "navigationBarTitleText": "听音拼写",
-  "usingComponents": {}
+  "navigationBarTitleText": "英语听音拼写",
+  "usingComponents": {
+    "handwrite": "/components/handwrite/handwrite"
+  }
 }
