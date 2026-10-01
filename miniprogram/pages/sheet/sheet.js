@@ -26,7 +26,9 @@ Page({
       store.fillPinyinForCustom();
       this.customList = store.getCustomList(options.lid);
     }
-    const units = vocab.getUnits(3, 1);
+    const grade = store.getProfile().grade || 3;
+    this.grade = grade;
+    const units = vocab.getUnits(grade, 1);
     this.setData({
       isCustom: this.isCustom,
       customName: (this.customList || {}).name || "",
@@ -54,7 +56,7 @@ Page({
       words = ((this.customList || {}).words || []).slice(0, 16);
     } else {
       const { unit, listType } = this.data;
-      words = vocab.buildWordList(3, 1, unit, listType, MAX_WORDS, "random");
+      words = vocab.buildWordList(this.grade || 3, 1, unit, listType, MAX_WORDS, "random");
     }
     if (!words.length) {
       wx.showToast({ title: "该词表为空", icon: "none" });
