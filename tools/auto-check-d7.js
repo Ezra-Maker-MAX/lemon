@@ -57,18 +57,18 @@ async function connect() {
   console.log("  试听播放完成（onDone 回调）✓ 真实云函数 TTS 音色链路通");
 
   /* ---------- 3. 再换一款超自然童声，缓存 key 应区分 ---------- */
-  console.log("\n[3] 换「云小朵」403000");
-  await page.callMethod("onVoiceTap", { currentTarget: { dataset: { id: 403000 } } });
+  console.log("\n[3] 换「智云」101004");
+  await page.callMethod("onVoiceTap", { currentTarget: { dataset: { id: 101004 } } });
   await sleep(300);
   d = await page.data();
-  if (d.s.voiceType !== 403000) throw new Error("换音色未落库: " + d.s.voiceType);
+  if (d.s.voiceType !== 101004) throw new Error("换音色未落库: " + d.s.voiceType);
   for (let i = 0; i < 20; i++) {
     await sleep(1000);
     d = await page.data();
     if (d.previewingId === 0) break;
   }
-  if (d.previewingId !== 0) throw new Error("云小朵试听未完成");
-  console.log("  403000 试听完成 ✓ 两款音色缓存互不串音");
+  if (d.previewingId !== 0) throw new Error("智云试听未完成");
+  console.log("  101004 试听完成 ✓ 两款音色缓存互不串音");
 
   /* ---------- 4. 报默页消费 voiceType ---------- */
   console.log("\n[4] 报默页读取 voiceType");
@@ -78,8 +78,8 @@ async function connect() {
     const p = getCurrentPages().find((pg) => pg.route.indexOf("dictation") > -1);
     return p ? p.settings.voiceType : null;
   });
-  if (consumed !== 403000) throw new Error("报默页 voiceType 异常: " + consumed);
-  console.log(`  报默页将用「云小朵」(${consumed}) 报默 ✓`);
+  if (consumed !== 101004) throw new Error("报默页 voiceType 异常: " + consumed);
+  console.log(`  报默页将用「智云」(${consumed}) 报默 ✓`);
 
   /* ---------- 5. D6 设置项共存回归 ---------- */
   console.log("\n[5] D6 设置项共存");
@@ -90,7 +90,7 @@ async function connect() {
   await page.callMethod("onPinyinToggle", { detail: { value: true } });
   await sleep(300);
   d = await page.data();
-  if (d.s.speechRate !== -0.4 || d.s.showPinyin !== true || d.s.voiceType !== 403000) {
+  if (d.s.speechRate !== -0.4 || d.s.showPinyin !== true || d.s.voiceType !== 101004) {
     throw new Error("设置项冲突: " + JSON.stringify(d.s));
   }
   console.log("  语速/拼音/音色三项互不覆盖 ✓");
