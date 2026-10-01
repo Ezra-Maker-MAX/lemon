@@ -82,6 +82,10 @@ Page({
     });
   },
 
+  goStats() {
+    wx.navigateTo({ url: "/pages/en-stats/en-stats" });
+  },
+
   goWrongReview() {
     if (!this.data.wrongCount) {
       wx.showToast({ title: "错词池是空的，先来一轮报默吧", icon: "none" });
