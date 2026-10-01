@@ -44,12 +44,13 @@ Page({
     this.settings = store.getSettings();
 
     const mode = options.mode === "review" ? "review" : "voice";
+    this.grade = Number(options.grade) || store.getProfile().grade || 3;
     const term = Number(options.term) || 1;
     const unit = Number(options.unit) || 1;
     const listType = options.listType || "xiezi";
     const count = Number(options.count) || 10;
     const order = options.order === "random" ? "random" : "seq";
-    this.sessionMeta = { mode, term, unit, listType, count, order, lid: options.lid || "" };
+    this.sessionMeta = { mode, grade: this.grade, term, unit, listType, count, order, lid: options.lid || "" };
 
     let words;
     let unitTitle = "";
@@ -74,8 +75,8 @@ Page({
       listName = "复习卷";
       unitTitle = "错题复习";
     } else {
-      words = vocab.buildWordList(3, term, unit, listType, count, order);
-      const units = vocab.getUnits(3, term);
+      words = vocab.buildWordList(this.grade, term, unit, listType, count, order);
+      const units = vocab.getUnits(this.grade, term);
       unitTitle = (units.find((u) => u.unit === unit) || {}).title || "";
       listName = LIST_NAME[listType] || listType;
     }
@@ -390,7 +391,7 @@ Page({
         .map((w) => ({ word: w.word, pinyin: w.pinyin }));
     } else {
       const m = this.sessionMeta;
-      words = vocab.buildWordList(3, m.term, m.unit, m.listType, m.count, m.order);
+      words = vocab.buildWordList(m.grade || this.grade || 3, m.term, m.unit, m.listType, m.count, m.order);
     }
     if (!words.length) return;
     this.setData({
