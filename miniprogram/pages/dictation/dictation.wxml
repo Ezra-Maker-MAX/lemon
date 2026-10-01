@@ -57,6 +57,11 @@
       </view>
       <view class="muted dz-hint" wx:if="{{showPinyin && current}}">拼音提示：{{current.pinyin}}</view>
       <view class="muted dz-hint" wx:if="{{!ttsOk}}">⚠ 语音不可用，家长念第 {{index + 1}} 个词</view>
+
+      <!-- 看写法：田字格逐字大字揭示（照抄到手写板） -->
+      <view class="zh-reveal" wx:if="{{revealed}}">
+        <view class="zg-cell" wx:for="{{revealCells}}" wx:key="index">{{item.ch}}</view>
+      </view>
     </view>
 
     <!-- 手写默写区（M2.2）：田字格手写 → 提交 OCR 判分 -->
@@ -76,6 +81,17 @@
         <text class="hw-verdict {{hwJudge.judge === 'ok' ? 'v-ok' : 'v-bad'}}">
           {{hwJudge.judge === 'ok' ? '✓ 写对了' : '✗ 写错了'}}
         </text>
+        <!-- 判错：逐字定位哪里错 -->
+        <view class="hw-detail" wx:if="{{hwJudge.judge === 'wrong' && hwJudge.detail}}">
+          <view class="hw-detail-cells">
+            <view class="hd-cell {{c.status}}" wx:for="{{hwJudge.detail}}" wx:key="index" wx:for-item="c">
+              <text class="hd-ch">{{c.ch}}</text>
+              <text class="hd-sub" wx:if="{{c.status === 'bad'}}">写{{c.got}}</text>
+              <text class="hd-sub" wx:elif="{{c.status === 'miss'}}">漏</text>
+            </view>
+          </view>
+          <view class="hd-hint" wx:if="{{hwJudge.hint}}">{{hwJudge.hint}}</view>
+        </view>
         <view class="hw-result-actions">
           <view class="btn-ghost hw-mini" bindtap="onHwToggle">改判</view>
           <view class="btn-primary hw-mini-primary" bindtap="onHwNext">下一个词 ›</view>
@@ -105,6 +121,7 @@
       <view class="btn-ghost ctrl-btn" bindtap="onRepeat">🔁 重听本词</view>
       <view class="btn-ghost ctrl-btn" bindtap="onPauseToggle">{{paused ? "▶ 继续" : "⏸ 暂停"}}</view>
     </view>
+    <view class="btn-ghost reveal-btn" wx:if="{{!revealed && !hwJudge}}" bindtap="onRevealZh">🙈 不会写？看写法（记入错题本）</view>
     <view class="judge-row" wx:if="{{!hwJudge}}">
       <view class="judge-btn judge-wrong" bindtap="mark" data-ok="0">标错</view>
       <view class="judge-btn judge-right" bindtap="mark" data-ok="1">标对</view>
