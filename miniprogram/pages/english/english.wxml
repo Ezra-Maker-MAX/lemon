@@ -50,5 +50,6 @@
       </view>
       <view class="en-wrong-badge {{wrongCount ? '' : 'is-empty'}}">{{wrongCount}}</view>
     </view>
+    <view class="en-stats-link" bindtap="goStats">📊 错词统计</view>
   </view>
 </view>
