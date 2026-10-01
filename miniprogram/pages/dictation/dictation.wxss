@@ -170,3 +170,66 @@
 .done-sec { font-size: 26rpx; font-weight: 500; margin: 12rpx 0; }
 .done-btn { text-align: center; margin-bottom: 8rpx; }
 .wrong-item { border-color: var(--red-pen); }
+
+/* 手写判分（M2.2） */
+.hw-card { margin-top: 16rpx; }
+.hw-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+.hw-hint { font-size: 22rpx; }
+.hw-mini {
+  font-size: 22rpx;
+  padding: 8rpx 22rpx;
+  border: 2rpx solid var(--line);
+  border-radius: 999rpx;
+}
+.hw-submit {
+  margin-top: 16rpx;
+  text-align: center;
+  font-size: 28rpx;
+}
+.hw-submit.is-loading { opacity: 0.6; }
+.hw-result {
+  margin-top: 18rpx;
+  padding: 18rpx 20rpx;
+  background: var(--paper);
+  border: 2rpx solid var(--line);
+  border-radius: var(--radius-btn, 16rpx);
+}
+.hw-ocr { display: block; font-size: 22rpx; }
+.hw-verdict { display: block; font-size: 34rpx; font-weight: 700; margin-top: 8rpx; }
+.v-ok { color: var(--green-ok); }
+.v-bad { color: var(--ink-red); }
+.hw-result-actions {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 16rpx;
+  align-items: center;
+}
+.hw-mini-primary {
+  font-size: 24rpx;
+  padding: 12rpx 30rpx;
+  border-radius: 999rpx;
+  background: var(--lemon);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* 词解读 */
+.ex-card { margin-top: 16rpx; padding: 22rpx 24rpx; }
+.ex-trigger {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 26rpx;
+  font-weight: 600;
+}
+.ex-arrow { font-size: 22rpx; font-weight: 400; }
+.ex-body { margin-top: 14rpx; }
+.ex-loading { font-size: 24rpx; }
+.ex-error { font-size: 24rpx; color: var(--ink-red); }
+.ex-meaning { font-size: 27rpx; line-height: 1.7; }
+.ex-row { font-size: 24rpx; margin-top: 10rpx; line-height: 1.6; }
