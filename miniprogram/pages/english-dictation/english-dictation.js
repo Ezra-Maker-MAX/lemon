@@ -1,7 +1,8 @@
-/* 英语听音拼写报默（M2）
+/* 英语听音拼写报默
    流程：🔊 听发音 → 看中文提示 → 孩子拼写 → 揭示四线三格拼写 → 自判
-   错词独立收录 wrong_book_en（与语文错题本分开）；整轮记 session(mode=english) */
-const EN_DB = require("../../data/vocab/english/grade3-term1");
+   错词独立收录 wrong_book_en（与语文错题本分开）；整轮记 session(mode=english)
+   入口：① 指定单元 ?grade=3&term=1&unit=2  ② 错词复习 ?mode=review（错词池随机 10 词） */
+const enVocab = require("../../data/vocab/english/index");
 const store = require("../../utils/store");
 const tts = require("../../utils/tts");
 
@@ -23,7 +24,23 @@ Page({
 
   onLoad(options) {
     store.initDefaults();
-    const u = EN_DB.units.find((x) => x.unit === Number(options.unit)) || EN_DB.units[0];
+    if (options.mode === "review") {
+      const pool = wx.getStorageSync("wrong_book_en") || [];
+      const picked = pool
+        .slice()
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 10)
+        .map((x) => ({ en: x.en, zh: x.zh, status: "pending" }));
+      this.unitData = { unit: 0 };
+      this.isReview = true;
+      this.setData({
+        unitTitle: "错词复习",
+        words: picked,
+      });
+      return;
+    }
+    const book = enVocab.getBook(Number(options.grade) || 3, Number(options.term) || 1);
+    const u = book.db.units.find((x) => x.unit === Number(options.unit)) || book.db.units[0];
     this.unitData = u;
     this.setData({
       unitTitle: u.title,
