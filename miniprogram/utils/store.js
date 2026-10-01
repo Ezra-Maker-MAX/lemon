@@ -23,6 +23,11 @@ const DEFAULT_PROFILE = {
   version: "人教版",
 };
 
+/* 可用音色白名单（基础音色，走基础语音合成资源包）
+   大模型音色（403000/502007/403006 等）走独立资源包，耗尽后 API 报
+   PkgExhausted → 无声；读取时校验，非法值回退默认 */
+const VALID_VOICES = [101001, 101002, 101004, 101006, 101015, 101016];
+
 function get(key, def) {
   try {
     const v = wx.getStorageSync(key);
@@ -54,7 +59,11 @@ const saveProfile = (p) => set(KEYS.PROFILE, p);
 /* ---------- 报默参数 ----------
    本地为主存储；改动时推送 Turso settings 表（key='settings'，value=JSON+savedAt）
    启动时 pullSettingsFromCloud() 拉取合并（savedAt 新者胜），多设备设置跟随 */
-const getSettings = () => Object.assign({}, DEFAULT_SETTINGS, get(KEYS.SETTINGS, {}));
+const getSettings = () => {
+  const s = Object.assign({}, DEFAULT_SETTINGS, get(KEYS.SETTINGS, {}));
+  if (!VALID_VOICES.includes(Number(s.voiceType))) s.voiceType = DEFAULT_SETTINGS.voiceType;
+  return s;
+};
 const saveSettings = (patch) => {
   const s = Object.assign(getSettings(), patch);
   s.savedAt = new Date().toISOString();
