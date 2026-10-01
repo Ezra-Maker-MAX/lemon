@@ -2,6 +2,7 @@
    每首随机挖 2 个空，候选 3 字（正确 + 同诗其它字干扰）
    完成后展示全诗；自包含计分，不入错题本（字形非词表内容） */
 const POEMS = require("../../data/extras/poems");
+const config = require("../../config/config");
 
 function rand(n) {
   return Math.floor(Math.random() * n);
@@ -62,6 +63,8 @@ Page({
     cur: 0,
     correct: 0,
     result: null,
+    poemImg: "", // done 阶段配图（dataURL）
+    poemImgLoading: false,
   },
 
   onPickPoem(e) {
@@ -102,7 +105,10 @@ Page({
         phase: "done",
         linesView: renderLines(poem, this.data.blanks, -1),
         result: { total: this.data.blanks.length, correct: this.data.correct },
+        poemImg: "",
+        poemImgLoading: false,
       });
+      this.ensurePoemImage();
       return;
     }
     this.setData({
@@ -111,7 +117,96 @@ Page({
     });
   },
 
+  /* ---------- 古诗配图（端直连 Agnes 图像模型；URL 缓存 7 天）
+     真机需在 mp 后台加 request 域名 apihub.agnes-ai.com + downloadFile 域名 platform-outputs.agnes-ai.space
+     （云函数出口对 Agnes 图像接口不可达，已实测弃走云函数） ---------- */
+  ensurePoemImage() {
+    const title = this.data.title;
+    let cached = null;
+    try {
+      cached = wx.getStorageSync("poemimg:" + title) || null;
+    } catch (e) { /* 忽略 */ }
+    if (cached && cached.url && Date.now() - cached.ts < 7 * 86400e3) {
+      this.setData({ poemImg: cached.url });
+      return;
+    }
+    this.fetchPoemImage();
+  },
+
+  fetchPoemImage() {
+    if (this.data.poemImgLoading) return;
+    const poem = POEMS.find((p) => p.title === this.data.title);
+    if (!poem) return;
+    this.setData({ poemImgLoading: true });
+    wx.request({
+      url: config.agnes.baseUrl + "/images/generations",
+      method: "POST",
+      timeout: 60000,
+      header: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + config.agnes.apiKey,
+      },
+      data: {
+        model: config.agnes.imageModel,
+        prompt:
+          `儿童绘本水彩插画，表现中国古诗《${poem.title}》的意境：${poem.lines.join("，")}。` +
+          `明亮温暖的柠檬黄与青绿色调，简洁留白，适合小学生，画面中不要出现任何文字`,
+        n: 1,
+        size: "512x512",
+      },
+      success: (r) => {
+        const url =
+          r.statusCode === 200 && r.data && r.data.data && r.data.data[0]
+            ? r.data.data[0].url
+            : "";
+        if (url) {
+          try {
+            wx.setStorageSync("poemimg:" + poem.title, { url, ts: Date.now() });
+          } catch (e) { /* 缓存失败不影响展示 */ }
+          this.setData({ poemImg: url, poemImgLoading: false });
+        } else {
+          this.setData({ poemImgLoading: false });
+          wx.showToast({ title: "生成失败，稍后再试", icon: "none" });
+        }
+      },
+      fail: () => {
+        this.setData({ poemImgLoading: false });
+        wx.showToast({ title: "网络异常，稍后再试", icon: "none" });
+      },
+    });
+  },
+
+  /* 配图保存到相册（downloadFile → 相册，需 platform-outputs.agnes-ai.space 白名单） */
+  onSaveImg() {
+    const url = this.data.poemImg;
+    if (!url) return;
+    wx.showLoading({ title: "保存中…" });
+    wx.downloadFile({
+      url,
+      success: (r) => {
+        wx.hideLoading();
+        if (r.statusCode !== 200) {
+          wx.showToast({ title: "下载失败", icon: "none" });
+          return;
+        }
+        wx.saveImageToPhotosAlbum({
+          filePath: r.tempFilePath,
+          success: () => wx.showToast({ title: "已存到相册", icon: "success" }),
+          fail: (e) => {
+            if (e.errMsg && e.errMsg.includes("auth")) {
+              wx.showToast({ title: "请在设置中允许保存到相册", icon: "none" });
+            }
+          },
+        });
+      },
+      fail: () => {
+        wx.hideLoading();
+        wx.showToast({ title: "下载失败，检查网络", icon: "none" });
+      },
+    });
+  },
+
   onBackList() {
-    this.setData({ phase: "list", blanks: [], result: null });
+    this.setData({ phase: "list", blanks: [], result: null, poemImg: "", poemImgLoading: false });
   },
 });
