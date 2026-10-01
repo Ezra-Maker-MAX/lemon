@@ -299,17 +299,17 @@ Page({
     this.mark({ currentTarget: { dataset: { ok: hwJudge.judge === "ok" ? "1" : "0" } } });
   },
 
-  /* ---------- 词解读（M2.2） ---------- */
+  /* ---------- 词解读（M2.2，B：Agnes LLM） ---------- */
   onExplain() {
     const w = this.data.words[this.data.index];
     if (!w) return;
     if (this.data.explain && !this.data.explain.error) return; // 已加载
     this.setData({ explain: { loading: true } });
-    wx.cloud
-      .callFunction({
-        name: "ai",
-        data: { action: "explain", lang: "zh", word: w.word },
-      })
+    const call = (data) =>
+      wx.cloud.callFunction({ name: "ai", data }).catch(() =>
+        wx.cloud.callFunction({ name: "ai", data }) // 3s 函数超时多为冷启动，热实例自动重试一次
+      );
+    call({ action: "explain", lang: "zh", word: w.word })
       .then((r) => {
         const out = r && r.result;
         if (out && out.code === "OK") {
