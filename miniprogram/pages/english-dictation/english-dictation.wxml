@@ -9,8 +9,9 @@
       </view>
       <view class="ed-zh">中文提示：{{current.zh}}</view>
 
-      <view class="four-line ed-line" wx:if="{{revealed}}">
-        <text class="four-line-word">{{current.en}}</text>
+      <!-- 揭示拼写：逐字母四线三格大字（照抄到手写板） -->
+      <view class="ed-reveal" wx:if="{{revealed}}">
+        <view class="en-cell" wx:for="{{revealCells}}" wx:key="index" wx:for-item="c">{{c.ch}}</view>
       </view>
       <view class="four-line ed-line ed-empty" wx:else>
         <text class="ed-q">？</text>
@@ -33,6 +34,17 @@
         <text class="hw-verdict {{hwJudge.judge === 'ok' ? 'v-ok' : 'v-bad'}}">
           {{hwJudge.judge === 'ok' ? '✓ 拼对了' : '✗ 拼错了'}}
         </text>
+        <!-- 判错：逐字母定位哪里错 -->
+        <view class="hw-detail" wx:if="{{hwJudge.judge === 'wrong' && hwJudge.detail}}">
+          <view class="hw-detail-cells">
+            <view class="hd-cell {{c.status}}" wx:for="{{hwJudge.detail}}" wx:key="index" wx:for-item="c">
+              <text class="hd-ch">{{c.ch}}</text>
+              <text class="hd-sub" wx:if="{{c.status === 'bad'}}">写{{c.got}}</text>
+              <text class="hd-sub" wx:elif="{{c.status === 'miss'}}">漏</text>
+            </view>
+          </view>
+          <view class="hd-hint" wx:if="{{hwJudge.hint}}">{{hwJudge.hint}}</view>
+        </view>
         <view class="hw-result-actions">
           <view class="btn-ghost hw-mini" bindtap="onHwToggle">改判</view>
           <view class="btn-primary hw-mini-primary" bindtap="onHwNext">下一个词 ›</view>
@@ -61,7 +73,7 @@
       <view class="btn-ghost ctrl-btn" bindtap="onRepeat">🔁 再听一次</view>
     </view>
 
-    <view class="btn-primary ed-btn" wx:if="{{!revealed}}" bindtap="onReveal">显示拼写</view>
+    <view class="btn-primary ed-btn" wx:if="{{!revealed}}" bindtap="onReveal">显示拼写（记入错词本）</view>
     <view class="judge-row" wx:else>
       <view class="judge-btn judge-wrong" bindtap="mark" data-ok="0">拼错了</view>
       <view class="judge-btn judge-right" bindtap="mark" data-ok="1">拼对了</view>
