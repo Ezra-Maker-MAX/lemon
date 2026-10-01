@@ -44,11 +44,23 @@ async function connect() {
   /* ---------- 2. 英语听音拼写 ---------- */
   console.log("\n[2] 英语听音拼写：U1 全流程（真实英语 TTS）");
   // 注：callMethod 在 reLaunch/navigateTo 后句柄会静默失效，导航类一律走 evaluate
-  await mp.evaluate(() => {
-    const pages = getCurrentPages();
-    const p = pages[pages.length - 1];
-    if (p && p.route === "pages/english/english") p.goDictation();
-  });
+  // reLaunch 后路由切换有竞态，重试到路由正确再导航
+  let navRoute = "";
+  for (let i = 0; i < 5; i++) {
+    await sleep(1500);
+    navRoute = await mp.evaluate(() => {
+      const pages = getCurrentPages();
+      const p = pages[pages.length - 1];
+      if (p && p.route === "pages/english/english") {
+        p.goDictation();
+        return "nav-ok";
+      }
+      return p ? p.route : "no-page";
+    });
+    if (navRoute === "nav-ok") break;
+    console.log(`  [retry ${i + 1}] 当前路由: ${navRoute}`);
+  }
+  if (navRoute !== "nav-ok") throw new Error("goDictation 导航失败，路由停在: " + navRoute);
   await sleep(2000);
   page = await mp.currentPage();
   d = await page.data();
