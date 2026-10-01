@@ -131,3 +131,78 @@
 .ex-phonetic { font-size: 26rpx; color: var(--ink-blue, #2B3A55); font-weight: 600; }
 .ex-meaning { font-size: 26rpx; line-height: 1.7; margin-top: 8rpx; }
 .ex-row { font-size: 24rpx; margin-top: 10rpx; line-height: 1.6; }
+
+/* 揭示拼写：逐字母四线三格（M2.3） */
+.ed-reveal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+  justify-content: center;
+  margin-top: 24rpx;
+}
+.en-cell {
+  position: relative;
+  width: 68rpx;
+  height: 126rpx;
+  box-sizing: border-box;
+  border-top: 2rpx solid #9CCDB4;
+  border-bottom: 2rpx solid #9CCDB4;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 40rpx; /* 基线落在 2/3 线上 */
+  font-size: 62rpx;
+  line-height: 1;
+  color: var(--ink);
+  font-weight: 500;
+}
+.en-cell::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 33.33%;
+  border-top: 2rpx dashed #C9E6D6;
+}
+.en-cell::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 66.66%;
+  border-top: 2rpx solid #9CCDB4;
+}
+
+/* 判错逐字母定位（M2.3） */
+.hw-detail { margin-top: 14rpx; }
+.hw-detail-cells {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  justify-content: center;
+}
+.hd-cell {
+  width: 84rpx;
+  height: 104rpx;
+  box-sizing: border-box;
+  border: 2rpx solid var(--line);
+  border-radius: 8rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rpx;
+}
+.hd-ch { font-size: 48rpx; line-height: 1.1; color: var(--ink); }
+.hd-sub { font-size: 20rpx; line-height: 1.1; color: #9CA3AF; }
+.hd-cell.ok { border-color: var(--green-ok); background: rgba(78, 155, 90, 0.08); }
+.hd-cell.bad { border-color: var(--ink-red); background: var(--fill-red); }
+.hd-cell.bad .hd-ch { color: var(--ink-red); }
+.hd-cell.miss { border-style: dashed; }
+.hd-hint {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: var(--ink-red);
+  text-align: center;
+  line-height: 1.6;
+}
