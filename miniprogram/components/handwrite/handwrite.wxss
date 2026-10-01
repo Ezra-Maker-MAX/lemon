@@ -1,0 +1,6 @@
+.hw-canvas {
+  width: 100%;
+  height: 440rpx;
+  border-radius: 12rpx;
+  touch-action: none;
+}
