@@ -10,6 +10,7 @@ import urllib.request
 
 BASE = "https://pinyin.bjwxjs.com"
 BOOK_ID = os.environ.get("BOOK_ID", "2026sanshang63")
+TERM = os.environ.get("TERM", "1")
 AREAS = [1, 10, 11]
 
 
@@ -78,9 +79,10 @@ def main():
         out_units.append(unit)
         print(f"{title}: 认 {len(unit['shizi'])} / 写 {len(unit['xiezi'])} / 词 {len(unit['ciyu'])}")
 
+    term_name = "上册" if TERM == "1" else "下册"
     data = {
         "grade": 3,
-        "term": 1,
+        "term": int(TERM),
         "bookId": BOOK_ID,
         "source": "青柠字词官方接口 pinyin.bjwxjs.com",
         "units": out_units,
@@ -90,12 +92,12 @@ def main():
     io.open("tools/official_vocab_snapshot.json", "w", encoding="utf-8").write(
         json.dumps({"units": units, "words": res["data"]["Words"]}, ensure_ascii=False))
 
-    # 5. 生成 term1.js
-    js = ("/* 词库数据：部编统编版三年级上册（官方数据，来自青柠字词接口，"
+    # 5. 生成 term{TERM}.js
+    js = ("/* 词库数据：部编统编版三年级" + term_name + "（官方数据，来自青柠字词接口，"
           + BOOK_ID + "）\n   由 tools/fetch_official_vocab.py 生成，请勿手改；如需更新重跑脚本 */\n"
           + "module.exports = " + json.dumps(data, ensure_ascii=False, indent=2) + ";\n")
-    io.open("miniprogram/data/vocab/grade3/term1.js", "w", encoding="utf-8").write(js)
-    print("term1.js written")
+    io.open(f"miniprogram/data/vocab/grade3/term{TERM}.js", "w", encoding="utf-8").write(js)
+    print(f"term{TERM}.js written")
 
 
 if __name__ == "__main__":
