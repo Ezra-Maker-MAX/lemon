@@ -6,6 +6,7 @@ config/*.local.json
 miniprogram/config/config.js
 cloudfunctions/*/secret.json
 cloudfunctions/*/llm.json
+cloudfunctions/*/turso.json
 cloudfunctions/**/node_modules/
 
 # WorkBuddy 会话数据
