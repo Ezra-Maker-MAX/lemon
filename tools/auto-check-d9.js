@@ -43,7 +43,12 @@ async function connect() {
 
   /* ---------- 2. 英语听音拼写 ---------- */
   console.log("\n[2] 英语听音拼写：U1 全流程（真实英语 TTS）");
-  await page.callMethod("goDictation");
+  // 注：callMethod 在 reLaunch/navigateTo 后句柄会静默失效，导航类一律走 evaluate
+  await mp.evaluate(() => {
+    const pages = getCurrentPages();
+    const p = pages[pages.length - 1];
+    if (p && p.route === "pages/english/english") p.goDictation();
+  });
   await sleep(2000);
   page = await mp.currentPage();
   d = await page.data();
@@ -85,8 +90,14 @@ async function connect() {
   const noPinyin = cl.words.filter((w) => !w.pinyin).length;
   console.log(`  词单保存 OK（4 词，补上拼音 ${4 - noPinyin}/4）`);
 
-  // 报默走自定义词源
-  await page.callMethod("goDictation", { currentTarget: { dataset: { id: cl.id } } });
+  // 报默走自定义词源（callMethod 句柄易静默失效，导航走 evaluate）
+  await mp.evaluate((lid) => {
+    const pages = getCurrentPages();
+    const p = pages[pages.length - 1];
+    if (p && p.route === "pages/custom-list/custom-list") {
+      p.goDictation({ currentTarget: { dataset: { id: lid } } });
+    }
+  }, cl.id);
   await sleep(1800);
   page = await mp.currentPage();
   d = await page.data();
