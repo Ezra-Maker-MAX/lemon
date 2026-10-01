@@ -5,6 +5,7 @@
 const enVocab = require("../../data/vocab/english/index");
 const store = require("../../utils/store");
 const tts = require("../../utils/tts");
+const ocrUtil = require("../../utils/ocr");
 
 const EN_VOICE = 101016; // 智甜·女童声（基础音色）
 
@@ -20,6 +21,10 @@ Page({
     speaking: false,
 
     result: null,
+
+    hwJudge: null, // 手写判分 {judge: ok|wrong, ocr, dist}
+    hwLoading: false,
+    explain: null, // 词典释义 {loading, phonetic, meanings, example, error}
   },
 
   onLoad(options) {
@@ -89,12 +94,121 @@ Page({
     const words = this.data.words.slice();
     words[i] = { ...w, status: ok ? "ok" : "wrong" };
     const next = i + 1;
+    this.setData({ words, hwJudge: null, explain: null });
+    const hw = this.selectComponent("#hw");
+    if (hw) hw.clear();
     if (next >= words.length) {
       this.finish(words);
       return;
     }
-    this.setData({ words, index: next, currentIndex: next });
+    this.setData({ index: next, currentIndex: next });
     this.speakCurrent();
+  },
+
+  /* ---------- 手写判分（M2.2）：四线三格手写英文 → OCR 滑窗比对 ---------- */
+  onHwClear() {
+    const hw = this.selectComponent("#hw");
+    if (hw) hw.clear();
+    this.setData({ hwJudge: null });
+  },
+
+  onHwSubmit() {
+    if (this.data.hwLoading) return;
+    const w = this.data.words[this.data.index];
+    const hw = this.selectComponent("#hw");
+    if (!w || !hw) return;
+    if (hw.isEmpty()) {
+      wx.showToast({ title: "先在四线格里拼写，再提交", icon: "none" });
+      return;
+    }
+    this.setData({ hwLoading: true });
+    hw
+      .exportImage()
+      .then((path) => {
+        const fsm = wx.getFileSystemManager();
+        fsm.readFile({
+          filePath: path,
+          encoding: "base64",
+          success: (res) =>
+            ocrUtil.ocrBase64(res.data).then((out) => {
+              this.setData({ hwLoading: false });
+              if (!out.ok) {
+                wx.showToast({ title: "识别失败，可手动判定", icon: "none" });
+                return;
+              }
+              const r = ocrUtil.judgeWord(w.en, out.lines, "en");
+              if (r.judge === "skip") {
+                wx.showToast({ title: "没认出来，重写或手动判", icon: "none" });
+                return;
+              }
+              this.setData({ hwJudge: r });
+            }),
+          fail: () => {
+            this.setData({ hwLoading: false });
+            wx.showToast({ title: "读取手写失败", icon: "none" });
+          },
+        });
+      })
+      .catch(() => {
+        this.setData({ hwLoading: false });
+        wx.showToast({ title: "导出手写失败", icon: "none" });
+      });
+  },
+
+  onHwToggle() {
+    const hwJudge = this.data.hwJudge;
+    if (!hwJudge) return;
+    this.setData({ hwJudge: { ...hwJudge, judge: hwJudge.judge === "ok" ? "wrong" : "ok" } });
+  },
+
+  onHwNext() {
+    const hwJudge = this.data.hwJudge;
+    if (!hwJudge) return;
+    this.setData({ revealed: true });
+    this.mark({ currentTarget: { dataset: { ok: hwJudge.judge === "ok" ? "1" : "0" } } });
+  },
+
+  /* ---------- 词释义（M2.2）：词库中文释义立即兜底 + LLM 联网增强 ---------- */
+  onExplain() {
+    const w = this.data.words[this.data.index];
+    if (!w) return;
+
+    // 第一层：词库自带中文释义（本地、零依赖）
+    if (this.data.explain && this.data.explain.level === 2) {
+      this.setData({ explain: null }); // 已是联网详解，再点收起
+      return;
+    }
+    if (this.data.explain && this.data.explain.enhancing) return; // 已在增强中
+    const local = {
+      phonetic: "",
+      meanings: [w.zh || "暂无释义"],
+      example: "",
+    };
+    if (this.data.explain) {
+      // 已展示本地层 → 第二层：LLM 增强
+      this.setData({ explain: { ...local, loading: true } });
+      wx.cloud
+        .callFunction({ name: "ai", data: { action: "explain", lang: "en", word: w.en } })
+        .then((r) => {
+          const out = r && r.result;
+          if (out && out.code === "OK" && out.data && !out.data.error) {
+            this.setData({ explain: { loading: false, ...out.data, level: 2 } });
+          } else {
+            this.setData({
+              explain: {
+                ...local,
+                error: (out && out.message) || "联网增强释义不可用，已显示课本释义",
+                level: 1,
+              },
+            });
+          }
+        })
+        .catch(() =>
+          this.setData({ explain: { ...local, error: "网络异常，已显示课本释义", level: 1 } })
+        );
+      return;
+    }
+    this.setData({ explain: { ...local, level: 1 } });
   },
 
   /* 英语错词本：独立 storage，最多记 100 条 */
@@ -155,5 +269,13 @@ Page({
 
   onUnload() {
     tts.stop();
+  },
+
+  /* ---------- 自动化调试入口（自检脚本调用，不影响正常流程） ---------- */
+  onMockHw(lines) {
+    const w = this.data.words[this.data.index];
+    if (!w) return;
+    const r = ocrUtil.judgeWord(w.en, lines || [], "en");
+    if (r.judge !== "skip") this.setData({ hwJudge: r });
   },
 });
