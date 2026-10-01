@@ -45,19 +45,21 @@ Page({
 
   onLoad(options) {
     store.initDefaults();
+    const grade = Number(options.grade) || store.getProfile().grade || 3;
+    this.grade = grade;
     const term = Number(options.term) || 1;
     const unit = Number(options.unit) || 1;
     const listType = options.listType || "xiezi";
     const count = Number(options.count) || 10;
     const order = options.order === "random" ? "random" : "seq";
 
-    const words = vocab.buildWordList(3, term, unit, listType, count, order);
+    const words = vocab.buildWordList(grade, term, unit, listType, count, order);
     if (!words.length) {
       wx.showToast({ title: "词表为空，请回词库选择", icon: "none" });
       setTimeout(() => wx.navigateBack(), 1200);
       return;
     }
-    const units = vocab.getUnits(3, term);
+    const units = vocab.getUnits(grade, term);
     const unitTitle = (units.find((u) => u.unit === unit) || {}).title || "";
     this.setData({
       term,
