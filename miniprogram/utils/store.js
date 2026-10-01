@@ -51,13 +51,49 @@ function initDefaults() {
 const getProfile = () => get(KEYS.PROFILE, DEFAULT_PROFILE);
 const saveProfile = (p) => set(KEYS.PROFILE, p);
 
-/* ---------- 报默参数 ---------- */
+/* ---------- 报默参数 ----------
+   本地为主存储；改动时推送 Turso settings 表（key='settings'，value=JSON+savedAt）
+   启动时 pullSettingsFromCloud() 拉取合并（savedAt 新者胜），多设备设置跟随 */
 const getSettings = () => Object.assign({}, DEFAULT_SETTINGS, get(KEYS.SETTINGS, {}));
 const saveSettings = (patch) => {
   const s = Object.assign(getSettings(), patch);
+  s.savedAt = new Date().toISOString();
   set(KEYS.SETTINGS, s);
+  syncSettingsToCloud(s);
   return s;
 };
+
+/* 设置上云：整包一行 upsert，失败静默 */
+function syncSettingsToCloud(s) {
+  const turso = require("./turso");
+  turso
+    .exec(
+      "INSERT OR REPLACE INTO settings (key, value) VALUES ('settings', ?)",
+      [JSON.stringify({ data: s, savedAt: s.savedAt })]
+    )
+    .catch(() => {});
+}
+
+/* 启动拉取：云端 savedAt 较新则采纳（多设备以最近修改为准） */
+function pullSettingsFromCloud() {
+  const turso = require("./turso");
+  turso
+    .execRaw("SELECT value FROM settings WHERE key = 'settings'")
+    .then((rows) => {
+      if (!rows.length) return;
+      try {
+        const cloud = JSON.parse(rows[0].value);
+        if (!cloud || !cloud.data || !cloud.savedAt) return;
+        const local = getSettings();
+        if (String(cloud.savedAt) > String(local.savedAt || "")) {
+          set(KEYS.SETTINGS, Object.assign({}, DEFAULT_SETTINGS, cloud.data));
+        }
+      } catch (e) {
+        /* 云端数据异常，忽略 */
+      }
+    })
+    .catch(() => {});
+}
 
 /* ---------- 报默记录 ---------- */
 function addSession(session) {
@@ -234,6 +270,7 @@ module.exports = {
   saveProfile,
   getSettings,
   saveSettings,
+  pullSettingsFromCloud,
   addSession,
   getSessions,
   getWeeklyAccuracy,
