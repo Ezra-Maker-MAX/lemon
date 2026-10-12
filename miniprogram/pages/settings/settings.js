@@ -117,7 +117,10 @@ Page({
         }
         wx.cloud
           .callFunction({ name: "ai", data: { action: "subscribeReport" } })
-          .then(() => wx.showToast({ title: "已订阅，周日晚 8 点见", icon: "success" }))
+          .then(() => {
+            wx.setStorageSync("weekPushLast", Date.now()); // 订阅即计时，7 天后打开小程序时发周报
+            wx.showToast({ title: "已订阅，7 天后打开小程序即收周报", icon: "success" });
+          })
           .catch(() => wx.showToast({ title: "订阅记录失败，稍后再试", icon: "none" }));
       },
       fail: () => wx.showToast({ title: "订阅未完成", icon: "none" }),
