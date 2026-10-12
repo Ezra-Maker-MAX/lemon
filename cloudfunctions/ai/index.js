@@ -278,6 +278,8 @@ exports.main = async (event) => {
             },
           });
           sendResults.push({ openid, ok: true });
+          // 一次性订阅：1 条额度，发出即清，等用户下次授权
+          await tursoPipeline(tcfg, [`DELETE FROM sub_quota WHERE openid = '${openid.replace(/'/g, "")}'`]);
         } catch (e) {
           sendResults.push({ openid, ok: false, err: String(e.errMsg || e.message).slice(0, 80) });
           // 43101 = 用户未订阅/额度用尽 → 清掉额度，等下次授权
